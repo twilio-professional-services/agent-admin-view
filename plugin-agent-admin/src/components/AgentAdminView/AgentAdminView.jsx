@@ -15,11 +15,13 @@ import Person from "@material-ui/icons/Person";
 import { Worker } from './AgentAdminView.styles';
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
+const INITIAL_STATE = { selectedWorker: undefined };
+
 class AgentAdminView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { selectedWorker: undefined }
+    this.state = INITIAL_STATE
 
   }
   updateWorker = (worker) => {
@@ -28,8 +30,14 @@ class AgentAdminView extends React.Component {
       name: 'WorkerAttributes',
       state: { isOpen: true }
     });
-    
+
   }
+
+  resetWorker = () => {
+    this.setState(INITIAL_STATE);
+
+  }
+
 
   render() {
     return (
@@ -38,7 +46,6 @@ class AgentAdminView extends React.Component {
           <TableHead>
             <TableRow>
               <TableCell> Select </TableCell>
-
               <TableCell>Worker Name</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Team</TableCell>
@@ -46,46 +53,34 @@ class AgentAdminView extends React.Component {
               <TableCell>Location</TableCell>
               <TableCell> Action </TableCell>
             </TableRow>
-
           </TableHead>
           <TableBody>
             {this.props.workers.map((wk) => (
-
               <TableRow key={wk.sid}>
                 <TableCell>
-
                   <Person
                     title='Update Agent'
                     onClick={() => {
                       // do stuff
                     }}
                   />
-
                 </TableCell>
-
                 <TableCell><Worker> {wk.friendlyName} </Worker></TableCell>
                 <TableCell><Worker> {wk.attributes.full_name} </Worker></TableCell>
                 <TableCell><Worker>{wk.attributes.team_name} </Worker></TableCell>
                 <TableCell><Worker> {wk.attributes.department} </Worker></TableCell>
                 <TableCell><Worker> {wk.attributes.location} </Worker></TableCell>
-
                 <TableCell>
                   <Button
                     onClick={() => {
                       this.updateWorker(wk);
                     }}
                   > Update </Button>
-
                 </TableCell>
-
               </TableRow>))}
-
           </TableBody>
-
         </Table>
-
-        <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} />
-  
+        <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} resetWorker={this.resetWorker} />
       </div>
     );
   };

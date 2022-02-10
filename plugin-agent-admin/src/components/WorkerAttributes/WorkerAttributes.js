@@ -20,7 +20,8 @@ const PLUGIN_NAME = 'AgentAdminPlugin';
 
 const INITIAL_STATE = {
   team_name: '',
-  department: ''
+  department: '',
+  location: ''
 }
 //NEW SidePanel
 class WorkerAttributes extends React.Component {
@@ -31,6 +32,8 @@ class WorkerAttributes extends React.Component {
 
   handleClose = () => {
     this.setState(INITIAL_STATE);
+    //Clear selectedWorker from parent component
+    this.props.resetWorker();
     this.closeDialog();
   }
 
@@ -43,10 +46,12 @@ class WorkerAttributes extends React.Component {
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    if (this.props.worker !== prevProps.worker) {
+    if (this.props.worker && this.props.worker !== prevProps.worker) {
       this.setState({
-        team_name: this.props.worker.attributes.team_name,
-        department: this.props.worker.attributes.department
+        team_name: this.props.worker.attributes.team_name || '' ,
+        department: this.props.worker.attributes.department || '',
+        location: this.props.worker.attributes.location || ''
+
       })
     }
   }
@@ -58,7 +63,10 @@ class WorkerAttributes extends React.Component {
     const value = e.target.value;
     this.setState({ department: value });
   }
-
+  changeLocation = e => {
+    const value = e.target.value;
+    this.setState({ location: value });
+  }
   saveWorkerAttributes = async () => {
     const workerSid = this.props.worker && this.props.worker.sid;
     //Only save if worker was selected
@@ -66,7 +74,8 @@ class WorkerAttributes extends React.Component {
       console.log(PLUGIN_NAME, 'WorkerSid:', workerSid);
       let updatedAttr = {
         team_name: this.state.team_name,
-        department: this.state.department
+        department: this.state.department,
+        location: this.state.location
       };
       console.log(PLUGIN_NAME, 'Updated Worker Attr:', updatedAttr);
       await WorkerUtil.updateWorker(workerSid, updatedAttr);
@@ -75,8 +84,7 @@ class WorkerAttributes extends React.Component {
       const manager = Manager.getInstance();
       manager.store.dispatch(WorkerActions.setWorkers(workers));
 
-      this.forceUpdate();
-      this.closeDialog();
+      this.handleClose();
     }
   }
 
@@ -113,6 +121,12 @@ class WorkerAttributes extends React.Component {
               <TableCell> Department </TableCell>
               <TableCell>
                 <TextField id='department-value' value={this.state.department} onChange={this.changeDept} />
+              </TableCell>
+            </TableRow>
+            <TableRow key='location'>
+              <TableCell> Location </TableCell>
+              <TableCell>
+                <TextField id='location-value' value={this.state.location} onChange={this.changeLocation} />
               </TableCell>
             </TableRow>
           </TableBody>
