@@ -52,7 +52,7 @@ class WorkerAttributes extends React.Component {
   }
   changeTeam = e => {
     const value = e.target.value;
-    this.setState({ team: value });
+    this.setState({ team_name: value });
   }
   changeDept = e => {
     const value = e.target.value;
@@ -65,7 +65,7 @@ class WorkerAttributes extends React.Component {
     if (workerSid) {
       console.log(PLUGIN_NAME, 'WorkerSid:', workerSid);
       let updatedAttr = {
-        team_name: this.state.team,
+        team_name: this.state.team_name,
         department: this.state.department
       };
       console.log(PLUGIN_NAME, 'Updated Worker Attr:', updatedAttr);
