@@ -9,7 +9,7 @@ import AgentAdminViewNavButton from './components/AgentAdminViewNavButton';
 import AgentAdminViewContainer from './components/AgentAdminView/AgentAdminView.Container';
 import WorkerUtil from './utils/WorkerUtil';
 import { Actions as WorkerActions } from './states/WorkerListState';
-import WorkerAttributesDialog from './components/WorkerAttributesDialog';
+
 
 const PLUGIN_NAME = 'AgentAdminPlugin';
 
@@ -46,10 +46,7 @@ export default class AgentAdminPlugin extends FlexPlugin {
         </View>
       );
 
-      flex.MainHeader.Content.add(<WorkerAttributesDialog
-        key="worker-attributes"
-      />, { sortOrder: 100 });
-  
+      
   
     }
     //more

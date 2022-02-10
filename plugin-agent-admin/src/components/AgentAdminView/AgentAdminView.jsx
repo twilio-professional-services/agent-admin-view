@@ -13,17 +13,20 @@ import {
 
 import Person from "@material-ui/icons/Person";
 import { Worker } from './AgentAdminView.styles';
+import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
 class AgentAdminView extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = { selectedWorker: undefined }
 
   }
   updateWorker = (worker) => {
+    this.setState({ selectedWorker: worker });
     Actions.invokeAction('SetComponentState', {
-      name: 'WorkerAttributesDialog',
-      state: { isOpen: true, worker }
+      name: 'WorkerAttributes',
+      state: { isOpen: true }
     });
     
   }
@@ -80,6 +83,9 @@ class AgentAdminView extends React.Component {
           </TableBody>
 
         </Table>
+
+        <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} />
+  
       </div>
     );
   };
