@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
+import { Actions, withTheme, Manager, SidePanel, FlexBox } from '@twilio/flex-ui';
+import { Container, Caption, Attr } from './WorkerAttributes.styles';
 
 import {
   Button,
@@ -48,7 +49,7 @@ class WorkerAttributes extends React.Component {
     // Typical usage (don't forget to compare props):
     if (this.props.worker && this.props.worker !== prevProps.worker) {
       this.setState({
-        team_name: this.props.worker.attributes.team_name || '' ,
+        team_name: this.props.worker.attributes.team_name || '',
         department: this.props.worker.attributes.department || '',
         location: this.props.worker.attributes.location || ''
 
@@ -100,48 +101,49 @@ class WorkerAttributes extends React.Component {
         isHidden={!this.props.isOpen}
         handleCloseClick={this.handleClose}
       >
-        <div>
-          Please update the attributes for {worker?.attributes?.full_name || "Agent"}
-        </div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell> Attribute </TableCell>
-              <TableCell> Value </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow key='team'>
-              <TableCell> Team </TableCell>
-              <TableCell>
-                <TextField id='team-value' value={this.state.team_name} onChange={this.changeTeam} />
-              </TableCell>
-            </TableRow>
-            <TableRow key='dept'>
-              <TableCell> Department </TableCell>
-              <TableCell>
-                <TextField id='department-value' value={this.state.department} onChange={this.changeDept} />
-              </TableCell>
-            </TableRow>
-            <TableRow key='location'>
-              <TableCell> Location </TableCell>
-              <TableCell>
-                <TextField id='location-value' value={this.state.location} onChange={this.changeLocation} />
-              </TableCell>
-            </TableRow>
-          </TableBody>
+        <Container vertical>
+          <Caption>
+           Agent: {worker?.attributes?.full_name || "Agent"}
+          </Caption>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell> Attribute </TableCell>
+                <TableCell> Value </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow key='team'>
+                <TableCell><Attr> Team </Attr></TableCell>
+                <TableCell>
+                  <TextField id='team-value' value={this.state.team_name} onChange={this.changeTeam} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='dept'>
+                <TableCell><Attr>  Department </Attr></TableCell>
+                <TableCell>
+                  <TextField id='department-value' value={this.state.department} onChange={this.changeDept} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='location'>
+                <TableCell><Attr> Location </Attr></TableCell>
+                <TableCell>
+                  <TextField id='location-value' value={this.state.location} onChange={this.changeLocation} />
+                </TableCell>
+              </TableRow>
+            </TableBody>
 
-        </Table>
+          </Table>
 
-        <Button
-          id="saveButton"
-          onClick={this.saveWorkerAttributes}
-          color="primary"
-        >
-          Save
-        </Button>
+          <Button
+            id="saveButton"
+            onClick={this.saveWorkerAttributes}
+            color="primary"
+          >
+            Save
+          </Button>
 
-
+        </Container>
       </SidePanel >
 
     );
