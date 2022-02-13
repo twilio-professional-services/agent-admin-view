@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Actions, withTheme, Manager, SidePanel, FlexBox } from '@twilio/flex-ui';
 import { Button } from "@twilio/flex-ui-core";
-import { Container, Caption, Attr, ButtonsContainer } from './WorkerAttributes.styles';
+import { Container, Caption, AttributeTableCell, AttributeTextField, ButtonsContainer } from './WorkerAttributes.styles';
 
 import {
   TableHead,
@@ -22,7 +22,8 @@ const PLUGIN_NAME = 'AgentAdminPlugin';
 const INITIAL_STATE = {
   team_name: '',
   department: '',
-  location: ''
+  location: '',
+  changed: false
 }
 //NEW SidePanel
 class WorkerAttributes extends React.Component {
@@ -58,15 +59,15 @@ class WorkerAttributes extends React.Component {
   }
   changeTeam = e => {
     const value = e.target.value;
-    this.setState({ team_name: value });
+    this.setState({changed: true, team_name: value });
   }
   changeDept = e => {
     const value = e.target.value;
-    this.setState({ department: value });
+    this.setState({changed: true, department: value });
   }
   changeLocation = e => {
     const value = e.target.value;
-    this.setState({ location: value });
+    this.setState({changed: true, location: value });
   }
   saveWorkerAttributes = async () => {
     const workerSid = this.props.worker && this.props.worker.sid;
@@ -91,15 +92,15 @@ class WorkerAttributes extends React.Component {
 
 
   render() {
-    const { worker, theme } = this.props;
-
+    const { isOpen, worker, theme } = this.props;
+    const { team_name, department, location, changed } = this.state;
     return (
 
       <SidePanel
         displayName="AgentAttributesPanel"
         className="agentAttrPanel"
         title={<div>Agent Attributes</div>}
-        isHidden={!this.props.isOpen}
+        isHidden={!isOpen}
         handleCloseClick={this.handleClose}
       >
         <Container vertical>
@@ -109,27 +110,27 @@ class WorkerAttributes extends React.Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell> Attribute </TableCell>
+                <AttributeTableCell> Attribute </AttributeTableCell>
                 <TableCell> Value </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow key='team'>
-                <TableCell><Attr> Team </Attr></TableCell>
+                <AttributeTableCell> Team </AttributeTableCell>
                 <TableCell>
-                  <TextField id='team-value' value={this.state.team_name} onChange={this.changeTeam} />
+                  <AttributeTextField id='team-value' value={team_name} onChange={this.changeTeam} />
                 </TableCell>
               </TableRow>
               <TableRow key='dept'>
-                <TableCell><Attr>  Department </Attr></TableCell>
+                <AttributeTableCell>  Department </AttributeTableCell>
                 <TableCell>
-                  <TextField id='department-value' value={this.state.department} onChange={this.changeDept} />
+                  <AttributeTextField id='department-value' value={department} onChange={this.changeDept} />
                 </TableCell>
               </TableRow>
               <TableRow key='location'>
-                <TableCell><Attr> Location </Attr></TableCell>
+                <AttributeTableCell> Location </AttributeTableCell>
                 <TableCell>
-                  <TextField id='location-value' value={this.state.location} onChange={this.changeLocation} />
+                  <AttributeTextField id='location-value' value={location} onChange={this.changeLocation} />
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -141,6 +142,7 @@ class WorkerAttributes extends React.Component {
               onClick={this.saveWorkerAttributes}
               themeOverride={theme.WorkerSkills.SaveButton}
               roundCorners={false}
+              disabled={!changed}
             >
               SAVE
             </Button>

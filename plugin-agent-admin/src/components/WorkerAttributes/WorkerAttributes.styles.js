@@ -1,17 +1,24 @@
 import styled from 'react-emotion';
 import { FlexBox } from '@twilio/flex-ui';
+import { TableCell, TextField } from "@material-ui/core";
 
 export const Caption = styled('div')`
   font-size: 12px;
-  margin-left: 4px;
+  margin: 12px;
   font-weight: bold;
-  margin-bottom: 14px;
 `;
-
-export const Attr = styled('div')`
+export const AttributeTableCell = styled(TableCell)`
   font-size: 12px;
+  margin: 0px 12px 0px 12px
+  height: 32px;
+  width: 100px;
 `;
 
+export const AttributeTextField = styled(TextField)`
+  flex: 0 0 0px;
+  height: 32px;
+  width: 180px;
+`;
 
 export const Container = styled(FlexBox)`
   font-size: 12px;
@@ -20,10 +27,10 @@ export const Container = styled(FlexBox)`
   margin-right: 4px;
 `;
 
-
 export const ButtonsContainer = styled("div")`
   margin-top: 24px;
   padding-left: 12px;
   padding-right: 12px;
   justify-content: center;
+  align: center;
 `;
