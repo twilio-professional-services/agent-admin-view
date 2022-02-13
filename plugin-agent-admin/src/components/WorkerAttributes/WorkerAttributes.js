@@ -2,7 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Actions, withTheme, Manager, SidePanel, FlexBox } from '@twilio/flex-ui';
 import { Button } from "@twilio/flex-ui-core";
-import { Container, Caption, AttributeTableCell, AttributeTextField, ButtonsContainer } from './WorkerAttributes.styles';
+import {
+  Container,
+  Caption,
+  AttributeTableCell,
+  AttributeName,
+  AttributeTextField,
+  ButtonsContainer
+} from './WorkerAttributes.styles';
 
 import {
   TableHead,
@@ -59,15 +66,15 @@ class WorkerAttributes extends React.Component {
   }
   changeTeam = e => {
     const value = e.target.value;
-    this.setState({changed: true, team_name: value });
+    this.setState({ changed: true, team_name: value });
   }
   changeDept = e => {
     const value = e.target.value;
-    this.setState({changed: true, department: value });
+    this.setState({ changed: true, department: value });
   }
   changeLocation = e => {
     const value = e.target.value;
-    this.setState({changed: true, location: value });
+    this.setState({ changed: true, location: value });
   }
   saveWorkerAttributes = async () => {
     const workerSid = this.props.worker && this.props.worker.sid;
@@ -116,19 +123,25 @@ class WorkerAttributes extends React.Component {
             </TableHead>
             <TableBody>
               <TableRow key='team'>
-                <AttributeTableCell> Team </AttributeTableCell>
+                <AttributeTableCell>
+                  <AttributeName> Team </AttributeName>
+                </AttributeTableCell>
                 <TableCell>
                   <AttributeTextField id='team-value' value={team_name} onChange={this.changeTeam} />
                 </TableCell>
               </TableRow>
               <TableRow key='dept'>
-                <AttributeTableCell>  Department </AttributeTableCell>
+                <AttributeTableCell>
+                  <AttributeName> Department </AttributeName>
+                </AttributeTableCell>
                 <TableCell>
                   <AttributeTextField id='department-value' value={department} onChange={this.changeDept} />
                 </TableCell>
               </TableRow>
               <TableRow key='location'>
-                <AttributeTableCell> Location </AttributeTableCell>
+                <AttributeTableCell>
+                  <AttributeName> Location </AttributeName>
+                </AttributeTableCell>
                 <TableCell>
                   <AttributeTextField id='location-value' value={location} onChange={this.changeLocation} />
                 </TableCell>

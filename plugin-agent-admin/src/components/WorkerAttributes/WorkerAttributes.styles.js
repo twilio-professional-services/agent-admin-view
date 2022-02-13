@@ -9,10 +9,16 @@ export const Caption = styled('div')`
 `;
 export const AttributeTableCell = styled(TableCell)`
   font-size: 12px;
-  margin: 0px 12px 0px 12px
+  padding: 0px 12px 0px 12px
   height: 32px;
   width: 100px;
 `;
+
+export const AttributeName = styled("div")`
+  font-size: 12px;
+  margin: 0px 6px 0px 
+`;
+
 
 export const AttributeTextField = styled(TextField)`
   flex: 0 0 0px;
