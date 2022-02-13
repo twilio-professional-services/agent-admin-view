@@ -19,3 +19,11 @@ export const Container = styled(FlexBox)`
   margin-left: 4px;
   margin-right: 4px;
 `;
+
+
+export const ButtonsContainer = styled("div")`
+  margin-top: 24px;
+  padding-left: 12px;
+  padding-right: 12px;
+  justify-content: center;
+`;

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Actions, withTheme, Manager, SidePanel, FlexBox } from '@twilio/flex-ui';
-import { Container, Caption, Attr } from './WorkerAttributes.styles';
+import { Button } from "@twilio/flex-ui-core";
+import { Container, Caption, Attr, ButtonsContainer } from './WorkerAttributes.styles';
 
 import {
-  Button,
   TableHead,
   TableContainer,
   Table,
@@ -91,7 +91,8 @@ class WorkerAttributes extends React.Component {
 
 
   render() {
-    const { worker } = this.props;
+    const { worker, theme } = this.props;
+
     return (
 
       <SidePanel
@@ -103,7 +104,7 @@ class WorkerAttributes extends React.Component {
       >
         <Container vertical>
           <Caption>
-           Agent: {worker?.attributes?.full_name || "Agent"}
+            Agent: {worker?.attributes?.full_name || "Agent"}
           </Caption>
           <Table>
             <TableHead>
@@ -134,14 +135,16 @@ class WorkerAttributes extends React.Component {
             </TableBody>
 
           </Table>
-
-          <Button
-            id="saveButton"
-            onClick={this.saveWorkerAttributes}
-            color="primary"
-          >
-            Save
-          </Button>
+          <ButtonsContainer>
+            <Button
+              id="saveButton"
+              onClick={this.saveWorkerAttributes}
+              themeOverride={theme.WorkerSkills.SaveButton}
+              roundCorners={false}
+            >
+              SAVE
+            </Button>
+          </ButtonsContainer>
 
         </Container>
       </SidePanel >
