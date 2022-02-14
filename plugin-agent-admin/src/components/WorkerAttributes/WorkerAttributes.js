@@ -27,9 +27,14 @@ import { Actions as WorkerActions } from '../../states/WorkerListState';
 const PLUGIN_NAME = 'AgentAdminPlugin';
 
 const INITIAL_STATE = {
+  agent_id: '',
+  manager: '',
+  team_id: '',
   team_name: '',
-  department: '',
+  department_id: '',
+  department_name: '',
   location: '',
+  agent_attribute_1: '',
   changed: false
 }
 //NEW SidePanel
@@ -56,42 +61,53 @@ class WorkerAttributes extends React.Component {
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     if (this.props.worker && this.props.worker !== prevProps.worker) {
+      //Init state from worker
+      const wk = this.props.worker;
       this.setState({
-        team_name: this.props.worker.attributes.team_name || '',
-        department: this.props.worker.attributes.department || '',
-        location: this.props.worker.attributes.location || ''
-
+        agent_id: wk.attributes.agent_id || '',
+        manager: wk.attributes.manager || '',
+        team_id: wk.attributes.team_id || '',
+        team_name: wk.attributes.team_name || '',
+        department_id: wk.attributes.department_id || '',
+        department_name: wk.attributes.department_name || '',
+        location: wk.attributes.location || '',
+        agent_attribute_1: wk.attributes.agent_attribute_1 || ''
       })
     }
   }
-  changeTeam = e => {
+
+  handleChange = e => {
+    console.log('change event ', e.target);
     const value = e.target.value;
-    this.setState({ changed: true, team_name: value });
+    //Text Field id needs to match State property
+    const id = e.target.id;
+    let newState = { changed: true };
+    newState[id] = value;
+    this.setState(newState);
   }
-  changeDept = e => {
-    const value = e.target.value;
-    this.setState({ changed: true, department: value });
-  }
-  changeLocation = e => {
-    const value = e.target.value;
-    this.setState({ changed: true, location: value });
-  }
+
   saveWorkerAttributes = async () => {
     const workerSid = this.props.worker && this.props.worker.sid;
     //Only save if worker was selected
     if (workerSid) {
       console.log(PLUGIN_NAME, 'WorkerSid:', workerSid);
+      const { agent_id, manager, team_id, team_name, 
+        department_id, department_name, location, agent_attribute_1 } = this.state;     
       let updatedAttr = {
-        team_name: this.state.team_name,
-        department: this.state.department,
-        location: this.state.location
+        agent_id,
+        manager,
+        team_id,
+        team_name,
+        department_id,
+        department_name,
+        agent_attribute_1,
+        location
       };
       console.log(PLUGIN_NAME, 'Updated Worker Attr:', updatedAttr);
       await WorkerUtil.updateWorker(workerSid, updatedAttr);
       //Refresh redux
       let workers = await WorkerUtil.getWorkers();
-      const manager = Manager.getInstance();
-      manager.store.dispatch(WorkerActions.setWorkers(workers));
+      Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
 
       this.handleClose();
     }
@@ -100,7 +116,8 @@ class WorkerAttributes extends React.Component {
 
   render() {
     const { isOpen, worker, theme } = this.props;
-    const { team_name, department, location, changed } = this.state;
+    const { changed, agent_id, manager, team_id, team_name, 
+      department_id, department_name, location, agent_attribute_1 } = this.state;
     return (
 
       <SidePanel
@@ -122,20 +139,52 @@ class WorkerAttributes extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow key='team'>
+            <TableRow key='agent_id'>
                 <AttributeTableCell>
-                  <AttributeName> Team </AttributeName>
+                  <AttributeName> Agent ID </AttributeName>
                 </AttributeTableCell>
                 <TableCell>
-                  <AttributeTextField id='team-value' value={team_name} onChange={this.changeTeam} />
+                  <AttributeTextField id='agent_id' value={agent_id} onChange={this.handleChange} />
                 </TableCell>
               </TableRow>
-              <TableRow key='dept'>
+              <TableRow key='manager'>
                 <AttributeTableCell>
-                  <AttributeName> Department </AttributeName>
+                  <AttributeName> Manager </AttributeName>
                 </AttributeTableCell>
                 <TableCell>
-                  <AttributeTextField id='department-value' value={department} onChange={this.changeDept} />
+                  <AttributeTextField id='manager' value={manager} onChange={this.handleChange} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='team_id'>
+                <AttributeTableCell>
+                  <AttributeName> Team ID </AttributeName>
+                </AttributeTableCell>
+                <TableCell>
+                  <AttributeTextField id='team_id' value={team_id} onChange={this.handleChange} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='team_name'>
+                <AttributeTableCell>
+                  <AttributeName> Team Name </AttributeName>
+                </AttributeTableCell>
+                <TableCell>
+                  <AttributeTextField id='team_name' value={team_name} onChange={this.handleChange} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='department_id'>
+                <AttributeTableCell>
+                  <AttributeName> Country (Dept. ID) </AttributeName>
+                </AttributeTableCell>
+                <TableCell>
+                  <AttributeTextField id='department_id' value={department_id} onChange={this.handleChange} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='department_name'>
+                <AttributeTableCell>
+                  <AttributeName> Department Name </AttributeName>
+                </AttributeTableCell>
+                <TableCell>
+                  <AttributeTextField id='department_name' value={department_name} onChange={this.handleChange} />
                 </TableCell>
               </TableRow>
               <TableRow key='location'>
@@ -143,7 +192,15 @@ class WorkerAttributes extends React.Component {
                   <AttributeName> Location </AttributeName>
                 </AttributeTableCell>
                 <TableCell>
-                  <AttributeTextField id='location-value' value={location} onChange={this.changeLocation} />
+                  <AttributeTextField id='location' value={location} onChange={this.handleChange} />
+                </TableCell>
+              </TableRow>
+              <TableRow key='agent_attribute_1'>
+                <AttributeTableCell>
+                  <AttributeName> Custom 1 </AttributeName>
+                </AttributeTableCell>
+                <TableCell>
+                  <AttributeTextField id='agent_attribute_1' value={agent_attribute_1} onChange={this.handleChange} />
                 </TableCell>
               </TableRow>
             </TableBody>
