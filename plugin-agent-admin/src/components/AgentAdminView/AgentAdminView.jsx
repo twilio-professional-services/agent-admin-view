@@ -60,7 +60,7 @@ class AgentAdminView extends React.Component {
                   <TableCell><Worker> {wk.friendlyName} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.full_name} </Worker></TableCell>
                   <TableCell><Worker>{wk.attributes.team_name} </Worker></TableCell>
-                  <TableCell><Worker> {wk.attributes.department} </Worker></TableCell>
+                  <TableCell><Worker> {wk.attributes.department_name} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.location} </Worker></TableCell>
                   <TableCell>
                     <Button
