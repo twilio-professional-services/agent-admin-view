@@ -9,12 +9,18 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  TableSortLabel,
+  TextField
 } from "@material-ui/core";
 
-import { Worker } from './AgentAdminView.styles';
+import { Worker, FilterTextField, TableHeaderCell } from './AgentAdminView.styles';
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
-const INITIAL_STATE = { selectedWorker: undefined };
+const INITIAL_STATE = {
+  selectedWorker: undefined,
+  sort: { name: "asc" },
+  filters: { team: "" }
+};
 
 class AgentAdminView extends React.Component {
 
@@ -38,7 +44,43 @@ class AgentAdminView extends React.Component {
   }
 
 
+  updateTeamFilter = (e) => {
+    const teamFilter = e.target.value.replace(/\s/g, "");
+    this.setState({ filters: { ...this.state.filters, team: teamFilter } });
+  };
+
+  filterTeam = (worker) => {
+    return (!this.state.filters.team || 
+      !worker.attributes.team_name || 
+      worker.attributes.team_name.includes(this.state.filters.team));
+  }
+
+
+  updateNameSort = (e) => {
+    const newSortOrder = this.state.sort.name === "asc" ? "desc" : "asc";
+    this.setState({
+      sort: { ...this.state.sort, name: newSortOrder },
+    });
+  };
+
+  sortName = (v1, v2) => {
+    const result =
+      this.state.sort.name === "asc"
+        ? v1.full_name < v2.full_name ? 1 : -1
+        : v1.full_name > v2.full_name ? 1 : -1;
+    return result;
+  };
+
+
+
   render() {
+    const nameSortValue = this.state.sort.name;
+    const teamFilterValue = this.state.filters.team;
+
+    const sortedWorkers = this.props.workers
+      .sort(this.sortName)
+      .filter(this.filterTeam);
+
     return (
       <FlexBox>
         <FlexBox vertical>
@@ -46,16 +88,33 @@ class AgentAdminView extends React.Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Worker Name</TableCell>
-                <TableCell>Full Name</TableCell>
-                <TableCell>Team</TableCell>
-                <TableCell>Dept.</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell> Action </TableCell>
+                <TableHeaderCell>
+                  Worker Name
+                  </TableHeaderCell>
+                <TableHeaderCell>
+                  <TableSortLabel
+                    active
+                    direction={nameSortValue}
+                    onClick={this.updateNameSort}
+                  >
+                    Full Name
+                  </TableSortLabel>
+                </TableHeaderCell>
+                <TableHeaderCell>
+                    <FilterTextField
+                      size="small"
+                      label="Team"
+                      value={teamFilterValue}
+                      onChange={this.updateTeamFilter}
+                    />
+                  </TableHeaderCell>
+                <TableHeaderCell>Dept.</TableHeaderCell>
+                <TableHeaderCell>Location</TableHeaderCell>
+                <TableHeaderCell> Action </TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.props.workers.map((wk) => (
+              {sortedWorkers.map((wk) => (
                 <TableRow key={wk.sid}>
                   <TableCell><Worker> {wk.friendlyName} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.full_name} </Worker></TableCell>
@@ -73,8 +132,8 @@ class AgentAdminView extends React.Component {
             </TableBody>
           </Table>
         </FlexBox>
-        
-          <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} resetWorker={this.resetWorker} />
+
+        <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} resetWorker={this.resetWorker} />
       </FlexBox>
     );
   };
