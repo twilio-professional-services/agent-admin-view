@@ -50,8 +50,8 @@ class AgentAdminView extends React.Component {
   };
 
   filterTeam = (worker) => {
-    return (!this.state.filters.team || 
-      !worker.attributes.team_name || 
+    return (!this.state.filters.team ||
+      !worker.attributes.team_name ||
       worker.attributes.team_name.includes(this.state.filters.team));
   }
 
@@ -71,7 +71,23 @@ class AgentAdminView extends React.Component {
     return result;
   };
 
-
+  getSkillsString = (worker) => {
+    if (!worker.attributes.routing || !worker.attributes.routing.skills) return "NONE";
+    const skills = worker.attributes.routing.skills;
+    const levels = worker.attributes.routing.levels;
+    let str = "";
+    if (skills.length==0) return "NONE";
+    for (let i = 0; i < skills.length; i++) {
+      let skill = skills[i];
+      str += skill;
+      if (levels) {
+        let lvl = levels[skill];
+        if (lvl) str = str + "(" + lvl + ")";
+      }
+      if (i < skills.length - 1) str += " / ";
+    }
+    return str;
+  }
 
   render() {
     const nameSortValue = this.state.sort.name;
@@ -90,7 +106,7 @@ class AgentAdminView extends React.Component {
               <TableRow>
                 <TableHeaderCell>
                   Worker Name
-                  </TableHeaderCell>
+                </TableHeaderCell>
                 <TableHeaderCell>
                   <TableSortLabel
                     active
@@ -101,15 +117,16 @@ class AgentAdminView extends React.Component {
                   </TableSortLabel>
                 </TableHeaderCell>
                 <TableHeaderCell>
-                    <FilterTextField
-                      size="small"
-                      label="Team"
-                      value={teamFilterValue}
-                      onChange={this.updateTeamFilter}
-                    />
-                  </TableHeaderCell>
+                  <FilterTextField
+                    size="small"
+                    label="Team"
+                    value={teamFilterValue}
+                    onChange={this.updateTeamFilter}
+                  />
+                </TableHeaderCell>
                 <TableHeaderCell>Dept.</TableHeaderCell>
                 <TableHeaderCell>Location</TableHeaderCell>
+                <TableHeaderCell>Skills</TableHeaderCell>
                 <TableHeaderCell> Action </TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -121,6 +138,7 @@ class AgentAdminView extends React.Component {
                   <TableCell><Worker>{wk.attributes.team_name} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.department_name} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.location} </Worker></TableCell>
+                  <TableCell><Worker> {this.getSkillsString(wk)} </Worker></TableCell>
                   <TableCell>
                     <Button
                       onClick={() => {
