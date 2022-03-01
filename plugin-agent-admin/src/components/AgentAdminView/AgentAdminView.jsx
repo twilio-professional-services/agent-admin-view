@@ -17,16 +17,18 @@ import { Worker, FilterTextField, TableHeaderCell } from './AgentAdminView.style
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
 const INITIAL_STATE = {
-  selectedWorker: undefined,
-  sort: { name: "asc" },
-  filters: { team: "", skills: "" }
+  selectedWorker: undefined
 };
 
 class AgentAdminView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = INITIAL_STATE
+    this.state = {
+      selectedWorker: undefined,
+      sort: { name: "asc" },
+      filters: { team: "", skills: "" }
+    }
 
   }
   updateWorker = (worker) => {
@@ -76,8 +78,8 @@ class AgentAdminView extends React.Component {
   sortName = (v1, v2) => {
     const result =
       this.state.sort.name === "asc"
-        ? v1.full_name < v2.full_name ? 1 : -1
-        : v1.full_name > v2.full_name ? 1 : -1;
+        ? v1.attributes.full_name < v2.attributes.full_name ? 1 : -1
+        : v1.attributes.full_name > v2.attributes.full_name ? 1 : -1;
     return result;
   };
 
@@ -86,11 +88,11 @@ class AgentAdminView extends React.Component {
     const { teamFilterValue, skillsFilterValue } = this.state.filters;
 
     const sortedWorkers = this.props.workers
-      .sort(this.sortName)
       .filter(this.filterTeam)
-      .filter(this.filterSkills);
+      .filter(this.filterSkills)
+      .sort(this.sortName);
       
-
+    console.log("workers", sortedWorkers);
     return (
       <FlexBox>
         <FlexBox vertical>
