@@ -3,6 +3,25 @@ const manager = Manager.getInstance();
 const PLUGIN_NAME = 'AgentAdminPlugin';
 
 class WorkerUtil {
+  //Format skills and levels as a string for display
+  getSkillsString = (worker) => {
+    if (!worker.attributes.routing || !worker.attributes.routing.skills) return "NONE";
+    const skills = worker.attributes.routing.skills;
+    const levels = worker.attributes.routing.levels;
+    let str = "";
+    if (skills.length==0) return "NONE";
+    for (let i = 0; i < skills.length; i++) {
+      let skill = skills[i];
+      str += skill;
+      if (levels) {
+        let lvl = levels[skill];
+        if (lvl) str = str + "(" + lvl + ")";
+      }
+      if (i < skills.length - 1) str += " / ";
+    }
+    return str;
+  }
+
   getWorkers = async () => {
     console.debug('Getting all workers');
     const fetchUrl = `${process.env.FLEX_APP_FUNCTIONS_BASE}/get-workers`;
@@ -27,6 +46,7 @@ class WorkerUtil {
     }
     //Fix attributes, Json string back to object
     workers.forEach(wk => wk.attributes = JSON.parse(wk.attributes));
+    workers.forEach(wk => wk.attributes.skillsString = this.getSkillsString(wk));
     return workers;
   }
 

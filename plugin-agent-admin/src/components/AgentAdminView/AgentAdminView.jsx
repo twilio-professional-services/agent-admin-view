@@ -19,7 +19,7 @@ import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 const INITIAL_STATE = {
   selectedWorker: undefined,
   sort: { name: "asc" },
-  filters: { team: "" }
+  filters: { team: "", skills: "" }
 };
 
 class AgentAdminView extends React.Component {
@@ -55,6 +55,16 @@ class AgentAdminView extends React.Component {
       worker.attributes.team_name.includes(this.state.filters.team));
   }
 
+  updateSkillsFilter = (e) => {
+    const skillsFilter = e.target.value.replace(/\s/g, "");
+    this.setState({ filters: { ...this.state.filters, skills: skillsFilter } });
+  };
+
+  filterSkills = (worker) => {
+    return (!this.state.filters.skills ||
+      !worker.attributes.skillsString ||
+      worker.attributes.skillsString.includes(this.state.filters.skills));
+  }
 
   updateNameSort = (e) => {
     const newSortOrder = this.state.sort.name === "asc" ? "desc" : "asc";
@@ -71,31 +81,15 @@ class AgentAdminView extends React.Component {
     return result;
   };
 
-  getSkillsString = (worker) => {
-    if (!worker.attributes.routing || !worker.attributes.routing.skills) return "NONE";
-    const skills = worker.attributes.routing.skills;
-    const levels = worker.attributes.routing.levels;
-    let str = "";
-    if (skills.length==0) return "NONE";
-    for (let i = 0; i < skills.length; i++) {
-      let skill = skills[i];
-      str += skill;
-      if (levels) {
-        let lvl = levels[skill];
-        if (lvl) str = str + "(" + lvl + ")";
-      }
-      if (i < skills.length - 1) str += " / ";
-    }
-    return str;
-  }
-
   render() {
     const nameSortValue = this.state.sort.name;
-    const teamFilterValue = this.state.filters.team;
+    const { teamFilterValue, skillsFilterValue } = this.state.filters;
 
     const sortedWorkers = this.props.workers
       .sort(this.sortName)
-      .filter(this.filterTeam);
+      .filter(this.filterTeam)
+      .filter(this.filterSkills);
+      
 
     return (
       <FlexBox>
@@ -126,7 +120,14 @@ class AgentAdminView extends React.Component {
                 </TableHeaderCell>
                 <TableHeaderCell>Dept.</TableHeaderCell>
                 <TableHeaderCell>Location</TableHeaderCell>
-                <TableHeaderCell>Skills</TableHeaderCell>
+                <TableHeaderCell>
+                <FilterTextField
+                    size="small"
+                    label="Skills"
+                    value={skillsFilterValue}
+                    onChange={this.updateSkillsFilter}
+                  />
+                  </TableHeaderCell>
                 <TableHeaderCell> Action </TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -138,7 +139,7 @@ class AgentAdminView extends React.Component {
                   <TableCell><Worker>{wk.attributes.team_name} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.department_name} </Worker></TableCell>
                   <TableCell><Worker> {wk.attributes.location} </Worker></TableCell>
-                  <TableCell><Worker> {this.getSkillsString(wk)} </Worker></TableCell>
+                  <TableCell><Worker> {wk.attributes.skillsString} </Worker></TableCell> 
                   <TableCell>
                     <Button
                       onClick={() => {
