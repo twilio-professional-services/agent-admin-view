@@ -1,6 +1,6 @@
 import React from 'react';
 import { VERSION, View } from '@twilio/flex-ui';
-import { FlexPlugin } from 'flex-plugin';
+import { FlexPlugin } from '@twilio/flex-plugin';
 
 //import CustomTaskListContainer from './components/CustomTaskList/CustomTaskList.Container';
 import reducers, { namespace } from './states';
@@ -46,8 +46,6 @@ export default class AgentAdminPlugin extends FlexPlugin {
         </View>
       );
 
-      
-  
     }
     //more
 
