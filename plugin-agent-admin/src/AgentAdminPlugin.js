@@ -27,11 +27,7 @@ export default class AgentAdminPlugin extends FlexPlugin {
    */
   async init(flex, manager) {
     this.registerReducers(manager);
-
-    let workers = await WorkerUtil.getWorkers();
-    console.log(PLUGIN_NAME, 'Workers data: ', workers);
-    manager.store.dispatch(WorkerActions.setWorkers(workers));
-
+    
     const { roles } = manager.user;
     if (roles.indexOf("admin") >= 0) {
       console.log(PLUGIN_NAME, 'Flex User is Admin');
@@ -47,8 +43,9 @@ export default class AgentAdminPlugin extends FlexPlugin {
       );
 
     }
-    //more
-
+    let workers = await WorkerUtil.getWorkers();
+    console.log(PLUGIN_NAME, 'Workers data: ', workers);
+    manager.store.dispatch(WorkerActions.setWorkers(workers));
 
   }
 
