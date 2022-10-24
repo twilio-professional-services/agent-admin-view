@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-import Paper from '@material-ui/core/Paper';
 import { Theme } from '@twilio-paste/core/theme';
-import { Button, Input, Text, Heading, Flex, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Button, Input, Text, Heading, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 import WorkerUtil from '../../utils/WorkerUtil';
 import { Actions as WorkerActions } from '../../states/WorkerListState';
@@ -111,7 +110,7 @@ class WorkerAttributes extends React.Component {
           isHidden={!isOpen}
           handleCloseClick={this.handleClose}
         >
-          <Paper elevation={2} style={{ height: 'auto', maxHeight: 600, overflow: 'auto' }}>
+          <Box overflow='auto' height= 'auto' maxHeight='600px'>
           <Flex vertical padding="space40" grow>
             <Table>
               <THead>
@@ -212,7 +211,7 @@ class WorkerAttributes extends React.Component {
             </Table>
 
           </Flex>
-          </Paper>
+          </Box>
         </SidePanel >
        
       </Theme.Provider >
