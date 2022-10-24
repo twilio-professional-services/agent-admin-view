@@ -12,7 +12,7 @@ import {
   TableSortLabel,
   TextField
 } from "@material-ui/core";
-
+import Paper from '@material-ui/core/Paper';
 import { Worker, FilterTextField, TableHeaderCell } from './AgentAdminView.styles';
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
@@ -96,7 +96,7 @@ class AgentAdminView extends React.Component {
     return (
       <FlexBox>
         <FlexBox vertical>
-
+        <Paper elevation={0} style={{ maxHeight: '100%', overflow: 'auto', margin: '6px' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -152,6 +152,7 @@ class AgentAdminView extends React.Component {
                 </TableRow>))}
             </TableBody>
           </Table>
+          </Paper>
         </FlexBox>
 
         <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} resetWorker={this.resetWorker} />

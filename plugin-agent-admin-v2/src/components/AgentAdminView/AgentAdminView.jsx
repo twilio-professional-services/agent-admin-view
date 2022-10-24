@@ -89,6 +89,7 @@ class AgentAdminView extends React.Component {
     console.log("workers", sortedWorkers);
     return (
       <Theme.Provider theme="flex">
+        <div style={{overflow: "auto"}} >
         <Flex>
           <Table>
             <THead>
@@ -158,6 +159,7 @@ class AgentAdminView extends React.Component {
 
           <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} resetWorker={this.resetWorker} />
         </Flex>
+        </div>
       </Theme.Provider>
     );
   };

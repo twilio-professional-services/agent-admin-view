@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-
+import Paper from '@material-ui/core/Paper';
 import { Theme } from '@twilio-paste/core/theme';
 import { Button, Input, Text, Heading, Flex, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
@@ -104,7 +104,6 @@ class WorkerAttributes extends React.Component {
       department_id, department_name, location, agent_attribute_1 } = this.state;
     return (
       <Theme.Provider theme="flex">
-
         <SidePanel
           displayName="AgentAttributesPanel"
           className="agentAttrPanel"
@@ -112,10 +111,8 @@ class WorkerAttributes extends React.Component {
           isHidden={!isOpen}
           handleCloseClick={this.handleClose}
         >
-          <Flex vertical>
-            <Heading as="h2" variant="heading40">
-              Agent: {worker?.attributes?.full_name || "Agent"}
-            </Heading>
+          <Paper elevation={2} style={{ height: 'auto', maxHeight: 600, overflow: 'auto' }}>
+          <Flex vertical padding="space40" grow>
             <Table>
               <THead>
                 <Tr>
@@ -124,6 +121,15 @@ class WorkerAttributes extends React.Component {
                 </Tr>
               </THead>
               <TBody>
+              <Tr key='agent_name'>
+                  <Td>
+                  <Label> Name </Label>
+                  </Td>
+                  <Td>
+                  {worker?.attributes?.full_name || "Agent"}
+                  </Td>
+                </Tr>
+
                 <Tr key='agent_id'>
                   <Td>
                     <Label htmlFor="agent_id"> Agent ID </Label>
@@ -206,7 +212,9 @@ class WorkerAttributes extends React.Component {
             </Table>
 
           </Flex>
+          </Paper>
         </SidePanel >
+       
       </Theme.Provider >
 
     );

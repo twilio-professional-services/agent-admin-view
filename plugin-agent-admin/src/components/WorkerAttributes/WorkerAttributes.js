@@ -20,6 +20,7 @@ import {
   TableCell,
   TextField
 } from "@material-ui/core";
+import Paper from '@material-ui/core/Paper';
 
 import WorkerUtil from '../../utils/WorkerUtil';
 import { Actions as WorkerActions } from '../../states/WorkerListState';
@@ -91,8 +92,8 @@ class WorkerAttributes extends React.Component {
     //Only save if worker was selected
     if (workerSid) {
       console.log(PLUGIN_NAME, 'WorkerSid:', workerSid);
-      const { agent_id, manager, team_id, team_name, 
-        department_id, department_name, location, agent_attribute_1 } = this.state;     
+      const { agent_id, manager, team_id, team_name,
+        department_id, department_name, location, agent_attribute_1 } = this.state;
       let updatedAttr = {
         agent_id,
         manager,
@@ -116,7 +117,7 @@ class WorkerAttributes extends React.Component {
 
   render() {
     const { isOpen, worker, theme } = this.props;
-    const { changed, agent_id, manager, team_id, team_name, 
+    const { changed, agent_id, manager, team_id, team_name,
       department_id, department_name, location, agent_attribute_1 } = this.state;
     return (
 
@@ -127,98 +128,106 @@ class WorkerAttributes extends React.Component {
         isHidden={!isOpen}
         handleCloseClick={this.handleClose}
       >
-        <Container vertical>
-          <Caption>
-            Agent: {worker?.attributes?.full_name || "Agent"}
-          </Caption>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <AttributeTableCell> Attribute </AttributeTableCell>
-                <TableCell> Value </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-            <TableRow key='agent_id'>
-                <AttributeTableCell>
-                  <AttributeName> Agent ID </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='agent_id' value={agent_id} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='manager'>
-                <AttributeTableCell>
-                  <AttributeName> Manager </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='manager' value={manager} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='team_id'>
-                <AttributeTableCell>
-                  <AttributeName> Team ID </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='team_id' value={team_id} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='team_name'>
-                <AttributeTableCell>
-                  <AttributeName> Team Name </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='team_name' value={team_name} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='department_id'>
-                <AttributeTableCell>
-                  <AttributeName> Country (Dept. ID) </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='department_id' value={department_id} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='department_name'>
-                <AttributeTableCell>
-                  <AttributeName> Department Name </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='department_name' value={department_name} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='location'>
-                <AttributeTableCell>
-                  <AttributeName> Location </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='location' value={location} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-              <TableRow key='agent_attribute_1'>
-                <AttributeTableCell>
-                  <AttributeName> Custom 1 </AttributeName>
-                </AttributeTableCell>
-                <TableCell>
-                  <AttributeTextField id='agent_attribute_1' value={agent_attribute_1} onChange={this.handleChange} />
-                </TableCell>
-              </TableRow>
-            </TableBody>
+        <Paper elevation={2} style={{ height: 'auto', maxHeight: 600, overflow: 'auto' }}>
+          <Container vertical>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <AttributeTableCell> Attribute </AttributeTableCell>
+                  <TableCell> Value </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow key='agent_id'>
+                  <AttributeTableCell>
+                    <AttributeName> Name </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeName> {worker?.attributes?.full_name || "Agent"} </AttributeName>
+                  </TableCell>
+                </TableRow>
 
-          </Table>
-          <ButtonsContainer>
-            <Button
-              id="saveButton"
-              onClick={this.saveWorkerAttributes}
-              themeOverride={theme.WorkerSkills.SaveButton}
-              roundCorners={false}
-              disabled={!changed}
-            >
-              SAVE
-            </Button>
-          </ButtonsContainer>
+                <TableRow key='agent_id'>
+                  <AttributeTableCell>
+                    <AttributeName> Agent ID </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='agent_id' value={agent_id} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='manager'>
+                  <AttributeTableCell>
+                    <AttributeName> Manager </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='manager' value={manager} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='team_id'>
+                  <AttributeTableCell>
+                    <AttributeName> Team ID </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='team_id' value={team_id} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='team_name'>
+                  <AttributeTableCell>
+                    <AttributeName> Team Name </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='team_name' value={team_name} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='department_id'>
+                  <AttributeTableCell>
+                    <AttributeName> Country (Dept. ID) </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='department_id' value={department_id} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='department_name'>
+                  <AttributeTableCell>
+                    <AttributeName> Department Name </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='department_name' value={department_name} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='location'>
+                  <AttributeTableCell>
+                    <AttributeName> Location </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='location' value={location} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+                <TableRow key='agent_attribute_1'>
+                  <AttributeTableCell>
+                    <AttributeName> Custom 1 </AttributeName>
+                  </AttributeTableCell>
+                  <TableCell>
+                    <AttributeTextField id='agent_attribute_1' value={agent_attribute_1} onChange={this.handleChange} />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
 
-        </Container>
+            </Table>
+            <ButtonsContainer>
+              <Button
+                id="saveButton"
+                onClick={this.saveWorkerAttributes}
+                themeOverride={theme.WorkerSkills.SaveButton}
+                roundCorners={false}
+                disabled={!changed}
+              >
+                SAVE
+              </Button>
+            </ButtonsContainer>
+
+          </Container>
+        </Paper>
       </SidePanel >
 
     );
