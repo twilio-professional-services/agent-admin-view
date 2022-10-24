@@ -4,6 +4,8 @@ import { Actions, withTheme, IconButton, FlexBox } from '@twilio/flex-ui';
 import { Theme } from '@twilio-paste/core/theme';
 import { Button, Input, Flex, Box, Label, Text, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
+import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
+
 import {
   TableSortLabel
 } from "@material-ui/core";
@@ -146,11 +148,11 @@ class AgentAdminView extends React.Component {
                   <Td> {wk.attributes.location} </Td>
                   <Td> {wk.attributes.skillsString} </Td>
                   <Td>
-                    <Button
+                    <Button variant="primary_icon"
                       onClick={() => {
                         this.updateWorker(wk);
                       }}
-                    > Update </Button>
+                    > <EditIcon decorative={false} title="Update" /> </Button>
                   </Td>
                 </Tr>))}
             </TBody>

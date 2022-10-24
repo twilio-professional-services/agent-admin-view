@@ -125,7 +125,7 @@ class WorkerAttributes extends React.Component {
                   <Label> Name </Label>
                   </Td>
                   <Td>
-                  {worker?.attributes?.full_name || "Agent"}
+                  {worker?.attributes?.full_name || worker?.friendlyName || "Agent"}
                   </Td>
                 </Tr>
 
