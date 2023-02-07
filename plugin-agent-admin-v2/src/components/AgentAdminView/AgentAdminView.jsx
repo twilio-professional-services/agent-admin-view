@@ -113,6 +113,7 @@ class AgentAdminView extends React.Component {
                     <Label htmlFor="team_filter"> Team: &nbsp; </Label>
                     <Flex width='size10'>
                       <Input id="team_filter"
+                        type="text"
                         size="small"
                         label="Team"
                         value={teamFilterValue}
@@ -127,6 +128,7 @@ class AgentAdminView extends React.Component {
                     <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
                     <Flex width='size10'>
                       <Input id="skills_filter"
+                        type="text"
                         size="small"
                         label="Skills"
                         value={skillsFilterValue}
