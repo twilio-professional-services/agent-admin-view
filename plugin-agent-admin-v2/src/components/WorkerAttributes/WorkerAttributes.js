@@ -14,6 +14,7 @@ import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
 
 const WorkerAttributes = ({ worker, resetWorker }) => {
   const [changed, setChanged] = useState(false);
+  const [fullName, setFullName] = useState('');
   const [agentId, setAgentId] = useState('');
   const [managerName, setManagerName] = useState('');
   const [teamId, setTeamId] = useState('');
@@ -34,6 +35,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   useEffect(() => {
     //console.log(PLUGIN_NAME, 'useEffect to update state from worker:', worker);
     if (worker) {
+      setFullName(worker.attributes.full_name || '');
       setAgentId(worker.attributes.agent_id || '');
       setManagerName(worker.attributes.manager || '');
       setTeamId(worker.attributes.team_id || '');
@@ -64,6 +66,9 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
     const id = e.target.id;
     setChanged(true);
     switch (id) {
+      case 'full_name':
+        setFullName(value);
+        break;
       case 'agent_id':
         setAgentId(value);
         break;
@@ -111,6 +116,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
     if (workerSid) {
       console.log(PLUGIN_NAME, 'WorkerSid:', workerSid);
       let updatedAttr = {
+        full_name: fullName,
         agent_id: agentId,
         manager: managerName,
         team_id: teamId,
@@ -154,9 +160,10 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
                     <Label> Name </Label>
                   </Td>
                   <Td>
-                    {worker?.attributes?.full_name || worker?.friendlyName || "Agent"}
+                    {worker?.friendlyName || "Agent"}
                   </Td>
                 </Tr>
+                <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
                 <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
                 <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
               
