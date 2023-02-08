@@ -1,6 +1,6 @@
 import { Input, Label, Tr, Td } from "@twilio-paste/core";
 
-const FormRow = ({ id, label, value, onChangeHandler }) => {
+const FormRowText = ({ id, label, value, onChangeHandler }) => {
   return (
     <Tr key={id}>
       <Td>
@@ -13,4 +13,4 @@ const FormRow = ({ id, label, value, onChangeHandler }) => {
   )
 }
 
-export default FormRow;
+export default FormRowText;

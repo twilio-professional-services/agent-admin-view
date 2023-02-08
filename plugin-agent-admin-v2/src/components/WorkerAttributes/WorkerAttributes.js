@@ -3,12 +3,14 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
 import { Theme } from '@twilio-paste/core/theme';
-import { Button, Input, Text, Heading, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Button, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 import WorkerUtil from '../../utils/WorkerUtil';
 import { Actions as WorkerActions, ACTION_SET_WORKERS } from '../../states/WorkerListState';
-import FormRow from './FormRow';
-const PLUGIN_NAME = 'AgentAdminPlugin';
+import FormRowText from './FormRowText';
+import FormRowSelect from './FormRowSelect';
+
+import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
 
 const WorkerAttributes = ({ worker, resetWorker }) => {
   const [changed, setChanged] = useState(false);
@@ -54,6 +56,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
     });
   }
 
+  //For text input fields
   const handleChange = e => {
     console.log('change event ', e.target);
     const value = e.target.value;
@@ -67,18 +70,6 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
       case 'manager_name':
         setManagerName(value);
         break;
-      case 'team_id':
-        setTeamId(value);
-        break;
-      case 'team_name':
-        setTeamName(value);
-        break;
-      case 'department_id':
-        setDepartmentId(value);
-        break;
-      case 'department_name':
-        setDepartmentName(value);
-        break;
       case 'location':
         setLocation(value);
         break;
@@ -87,6 +78,31 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
         break;
     }
 
+  }
+
+  // See the notes in our Flex insights docs
+  // https://www.twilio.com/docs/flex/developer/insights/enhance-integration
+  //    The team_id attribute is required to display team_name.
+  //    The department_id attribute is required to display department_name.
+  //
+  // Because of the above it's easier to simply set team_id/name to the same values
+  // and similarly to set department_id/name to the same values
+
+
+  const handleTeamChange = (e) => {
+    setChanged(true);
+    const team = e.target.value;
+    //Store team in both team_id and team_name for consistent reporting
+    setTeamId(team);
+    setTeamName(team);
+  }
+
+  const handleDeptChange = (e) => {
+    setChanged(true);
+    const dept = e.target.value;
+    //Store dept in both department_id and department_name for consistent reporting
+    setDepartmentId(dept);
+    setDepartmentName(dept);
   }
 
   const saveWorkerAttributes = async () => {
@@ -124,8 +140,8 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
         handleCloseClick={handleClose}
       >
         <Box overflow='auto' height='auto' maxHeight='600px'>
-          <Flex vertical padding="space40" grow>
-            <Table>
+          <Flex vertical padding="space20" grow>
+            <Table variant="borderless">
               <THead>
                 <Tr>
                   <Th> Attribute </Th>
@@ -141,15 +157,26 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
                     {worker?.attributes?.full_name || worker?.friendlyName || "Agent"}
                   </Td>
                 </Tr>
-                <FormRow id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
-                <FormRow id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
-                <FormRow id="team_id" label="Team Id" value={teamId} onChangeHandler={handleChange} />
-                <FormRow id="team_name" label="Team Name" value={teamName} onChangeHandler={handleChange} />
-                <FormRow id="department_id" label="Dept. Id" value={departmentId} onChangeHandler={handleChange} />
-                <FormRow id="department_name" label="Dept. Name" value={departmentName} onChangeHandler={handleChange} />
-                <FormRow id="location" label="Location" value={location} onChangeHandler={handleChange} />
-                <FormRow id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
+                <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
+                <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
               
+                <FormRowSelect 
+                  id="team_name" 
+                  label="Team" 
+                  value={teamName} 
+                  options={teams}
+                  onChangeHandler={handleTeamChange} />
+
+                <FormRowSelect 
+                  id="department_name" 
+                  label="Dept." 
+                  value={departmentName} 
+                  options={departments}
+                  onChangeHandler={handleDeptChange} />
+
+                <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
+                <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
+
                 <Tr key='button'>
                   <Td />
                   <Td>
