@@ -4,7 +4,7 @@ import { FlexPlugin } from '@twilio/flex-plugin';
 import reducers, { namespace } from './states';
 
 import AgentAdminViewNavButton from './components/AgentAdminViewNavButton';
-import AgentAdminViewContainer from './components/AgentAdminView/AgentAdminView.Container';
+import AgentAdminView from './components/AgentAdminView/AgentAdminView';
 import WorkerUtil from './utils/WorkerUtil';
 import { Actions as WorkerActions } from './states/WorkerListState';
 
@@ -35,7 +35,7 @@ export default class AgentAdminPlugin extends FlexPlugin {
 
       flex.ViewCollection.Content.add(
         <View name="agent-admin-view" key="agent-admin-view">
-          <AgentAdminViewContainer key="worker-list-view" />
+          <AgentAdminView key="worker-list-view" />
         </View>
       );
 
