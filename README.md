@@ -6,7 +6,7 @@ Twilio Flex Plugins allow you to customize the appearance and behavior of [Twili
 ## How it works
 This Flex plugin adds a Navigation Menu Item and a new View to display all the workers/agents and some of the worker attributes.  Clicking Update allows an Admin to change the worker attributes from within Flex (Note: Routing Skills still need to be modified from the Teams View). This new Agent Admin view makes it easier to manage worker attributes because the Flex Admin does not need to switch back to TaskRouter > Workers for these types of changes.  The Workers Skills array (and Levels config) is transformed into a String for display purposes. The Agent Admin View supports Sorting by Name and Filtering by Team and Skills.
 
-<img width="800px" src="images/agentAdminView.png"/>
+<img width="800px" src="images/agentAdminViewV2.png"/>
 
 
 This plugin leverages two Serverless functions to get the complete list of workers and to update an individual worker's attributes.   The array of workers is stored as part of the app state in the Redux store.
