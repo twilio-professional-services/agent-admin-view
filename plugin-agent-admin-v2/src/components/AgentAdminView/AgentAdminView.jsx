@@ -1,8 +1,8 @@
-import React from 'react';
-import { Actions, withTheme, IconButton, FlexBox } from '@twilio/flex-ui';
-
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
 import { Theme } from '@twilio-paste/core/theme';
-import { Button, Input, Flex, Box, Label, Text, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Button, Input, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
 
@@ -12,23 +12,18 @@ import {
 
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
-const INITIAL_STATE = {
-  selectedWorker: undefined
-};
+const AgentAdminView = () => {
+  const [selectedWorker, setSelectedWorker] = useState('');
+  const [sort, setSort] = useState({ name: "asc" })
+  const [teamFilterValue, setTeamFilterValue] = useState('');
+  const [skillsFilterValue, setSkillsFilterValue] = useState('');
 
-class AgentAdminView extends React.Component {
+  const workers = useSelector(
+    state => { return state['agent-admin']?.workerList?.workers || [] }
+  );
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedWorker: undefined,
-      sort: { name: "asc" },
-      filters: { team: "", skills: "" }
-    }
-
-  }
-  updateWorker = (worker) => {
-    this.setState({ selectedWorker: worker });
+  const openEditWorkerAttr = (worker) => {
+    setSelectedWorker(worker);
     Actions.invokeAction('SetComponentState', {
       name: 'WorkerAttributes',
       state: { isOpen: true }
@@ -36,62 +31,56 @@ class AgentAdminView extends React.Component {
 
   }
 
-  resetWorker = () => {
-    this.setState(INITIAL_STATE);
-
+  const resetWorker = () => {
+    setSelectedWorker('');
   }
 
-
-  updateTeamFilter = (e) => {
+  const updateTeamFilter = (e) => {
     const teamFilter = e.target.value.replace(/\s/g, "");
-    this.setState({ filters: { ...this.state.filters, team: teamFilter } });
+    setTeamFilterValue(teamFilter);
   };
 
-  filterTeam = (worker) => {
-    return (!this.state.filters.team ||
-      !worker.attributes.team_name ||
-      worker.attributes.team_name.includes(this.state.filters.team));
+  const filterByTeam = (worker) => {
+    return (!teamFilterValue || !worker.attributes.team_name ||
+      worker.attributes.team_name.includes(teamFilterValue));
   }
 
-  updateSkillsFilter = (e) => {
+  const updateSkillsFilter = (e) => {
     const skillsFilter = e.target.value.replace(/\s/g, "");
-    this.setState({ filters: { ...this.state.filters, skills: skillsFilter } });
+    setSkillsFilterValue(skillsFilter);
   };
 
-  filterSkills = (worker) => {
-    return (!this.state.filters.skills ||
-      !worker.attributes.skillsString ||
-      worker.attributes.skillsString.includes(this.state.filters.skills));
+  const filterBySkills = (worker) => {
+    return (!skillsFilterValue || !worker.attributes.skillsString ||
+      worker.attributes.skillsString.includes(skillsFilterValue));
   }
 
-  updateNameSort = (e) => {
-    const newSortOrder = this.state.sort.name === "asc" ? "desc" : "asc";
-    this.setState({
-      sort: { ...this.state.sort, name: newSortOrder },
-    });
+  const updateNameSort = (e) => {
+    const newSortOrder = sort.name === "asc" ? "desc" : "asc";
+    setSort({ name: newSortOrder });
   };
 
-  sortName = (v1, v2) => {
+  const sortByName = (v1, v2) => {
     const result =
-      this.state.sort.name === "asc"
+      sort.name === "asc"
         ? v1.attributes.full_name < v2.attributes.full_name ? 1 : -1
         : v1.attributes.full_name > v2.attributes.full_name ? 1 : -1;
     return result;
   };
 
-  render() {
-    const nameSortValue = this.state.sort.name;
-    const { teamFilterValue, skillsFilterValue } = this.state.filters;
+  const nameSortValue = sort.name;
 
-    const sortedWorkers = this.props.workers
-      .filter(this.filterTeam)
-      .filter(this.filterSkills)
-      .sort(this.sortName);
+  let sortedWorkers = [];
+  if (workers && workers.length > 1) {
+    sortedWorkers = workers
+      .filter(filterByTeam)
+      .filter(filterBySkills)
+      .sort(sortByName);
+  }
 
-    console.log("workers", sortedWorkers);
-    return (
-      <Theme.Provider theme="flex">
-        <Box overflow='auto' maxHeight= '100%'>
+  return (
+    <Theme.Provider theme="flex">
+      <Box overflow='auto' maxHeight='100%'>
         <Flex>
           <Table>
             <THead>
@@ -103,7 +92,7 @@ class AgentAdminView extends React.Component {
                   <TableSortLabel
                     active
                     direction={nameSortValue}
-                    onClick={this.updateNameSort}
+                    onClick={updateNameSort}
                   >
                     Full Name
                   </TableSortLabel>
@@ -113,10 +102,11 @@ class AgentAdminView extends React.Component {
                     <Label htmlFor="team_filter"> Team: &nbsp; </Label>
                     <Flex width='size10'>
                       <Input id="team_filter"
+                        type="text"
                         size="small"
                         label="Team"
                         value={teamFilterValue}
-                        onChange={this.updateTeamFilter}
+                        onChange={updateTeamFilter}
                       /></Flex>
                   </Flex>
                 </Th>
@@ -127,10 +117,11 @@ class AgentAdminView extends React.Component {
                     <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
                     <Flex width='size10'>
                       <Input id="skills_filter"
+                        type="text"
                         size="small"
                         label="Skills"
                         value={skillsFilterValue}
-                        onChange={this.updateSkillsFilter}
+                        onChange={updateSkillsFilter}
                       />
                     </Flex>
                   </Flex>
@@ -150,7 +141,7 @@ class AgentAdminView extends React.Component {
                   <Td>
                     <Button variant="primary_icon"
                       onClick={() => {
-                        this.updateWorker(wk);
+                        openEditWorkerAttr(wk);
                       }}
                     > <EditIcon decorative={false} title="Update" /> </Button>
                   </Td>
@@ -159,12 +150,12 @@ class AgentAdminView extends React.Component {
           </Table>
 
 
-          <WorkerAttributes key="worker-attributes" worker={this.state.selectedWorker} resetWorker={this.resetWorker} />
+          <WorkerAttributes key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
         </Flex>
-        </Box>
-      </Theme.Provider>
-    );
-  };
-}
+      </Box>
+    </Theme.Provider>
+  );
+};
+//}
 
 export default AgentAdminView;
