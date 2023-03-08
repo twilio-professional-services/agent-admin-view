@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-import { Theme } from '@twilio-paste/core/theme';
 import { Button, Flex, Box, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 import WorkerUtil from '../../utils/WorkerUtil';
@@ -143,7 +142,6 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
   }
 
   return (
-    <Theme.Provider theme="flex">
       <SidePanel
         displayName="AgentAttributesPanel"
         className="agentAttrPanel"
@@ -210,7 +208,6 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
         </Box>
       </SidePanel >
 
-    </Theme.Provider >
   );
 }
 

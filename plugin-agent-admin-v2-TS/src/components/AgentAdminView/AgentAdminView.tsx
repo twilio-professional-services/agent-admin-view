@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
-import { Theme } from '@twilio-paste/core/theme';
 import { Button, Input, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
@@ -11,13 +10,14 @@ import {
   TableSortLabel
 } from "@material-ui/core";
 import { namespace } from 'states';
+
 type SortDirection = 'asc' | 'desc'
 
 
 import UpdateWorkerPanel from '../UpdateWorkerPanel/UpdateWorkerPanel';
 
 const AgentAdminView = () => {
-  const [selectedWorker, setSelectedWorker] = useState<WorkerItem>();
+  const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
   const [sort, setSort] = useState({ name: "asc" })
   const [teamFilterValue, setTeamFilterValue] = useState('');
   const [skillsFilterValue, setSkillsFilterValue] = useState('');
@@ -83,7 +83,6 @@ const AgentAdminView = () => {
   }
 
   return (
-    <Theme.Provider theme="flex">
       <Box overflow='auto' maxHeight='100%'>
         <Flex>
           <Table>
@@ -149,11 +148,10 @@ const AgentAdminView = () => {
             </TBody>
           </Table>
 
-
           <UpdateWorkerPanel key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
         </Flex>
       </Box>
-    </Theme.Provider>
+    
   );
 };
 //}
