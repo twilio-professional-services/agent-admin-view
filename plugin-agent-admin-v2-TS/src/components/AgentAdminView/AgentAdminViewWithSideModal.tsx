@@ -12,7 +12,8 @@ import {
   TBody,
   Th,
   Tr,
-  Td
+  Td,
+  useSideModalState
 } from "@twilio-paste/core";
 
 import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
@@ -28,7 +29,7 @@ type SortDirection = 'asc' | 'desc'
 import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal'
 
 const AgentAdminViewWithSideModal = () => {
-  //const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
+  const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
   const [sort, setSort] = useState({ name: "asc" })
   const [teamFilterValue, setTeamFilterValue] = useState('');
   const [skillsFilterValue, setSkillsFilterValue] = useState('');
@@ -36,6 +37,18 @@ const AgentAdminViewWithSideModal = () => {
   const workers = useSelector(
     (state: AppState) => { return state[namespace]?.workerList?.workers || [] }
   );
+
+  const dialog = useSideModalState({});
+
+  const openEditWorkerAttr = (worker: WorkerItem) => {
+    setSelectedWorker(worker);
+    dialog.show();
+  }
+
+  const resetWorker = () => {
+    setSelectedWorker(undefined);
+    dialog.hide();
+  }
 
   const updateTeamFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const teamFilter = e.target.value.replace(/\s/g, "");
@@ -136,12 +149,18 @@ const AgentAdminViewWithSideModal = () => {
                 <Td> {wk.attributes.location} </Td>
                 <Td> {wk.attributes.skillsString} </Td>
                 <Td>
-                    <UpdateWorkerSideModal worker={wk} />
-                </Td>
+                    <Button variant="primary_icon" id="updateButton" size="small"
+                      onClick={() => {
+                        openEditWorkerAttr(wk);
+                      }}
+                    > <EditIcon decorative={false} title="Update" /> </Button>
+                  </Td>
               </Tr>))}
+         
+         
           </TBody>
         </Table>
-
+        <UpdateWorkerSideModal dialogState={dialog} worker={selectedWorker} resetWorker={resetWorker} />
       </Flex>
     </Box>
 

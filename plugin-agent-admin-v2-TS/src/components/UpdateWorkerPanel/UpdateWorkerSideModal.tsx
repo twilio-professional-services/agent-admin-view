@@ -18,9 +18,7 @@ import {
   SideModalBody,
   SideModalFooter,
   SideModalFooterActions,
-  SideModalContainer,
-  SideModalButton,
-  useSideModalState
+  SideModalContainer
 } from "@twilio-paste/core";
 
 import WorkerUtil from '../../utils/WorkerUtil';
@@ -29,13 +27,15 @@ import FormRowText from './FormRowText';
 import FormRowSelect from './FormRowSelect';
 
 import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
-import { AppState, WorkerItem } from '../../states/types';
+import { WorkerItem } from '../../states/types';
 
 interface OwnProps {
   worker: WorkerItem | undefined,
+  resetWorker: () => void,
+  dialogState: any
 }
 
-const UpdateWorkerSideModal = ({ worker}: OwnProps) => {
+const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) => {
   const [changed, setChanged] = useState(false);
   const [fullName, setFullName] = useState('');
   const [agentId, setAgentId] = useState('');
@@ -64,7 +64,6 @@ const UpdateWorkerSideModal = ({ worker}: OwnProps) => {
     //No return cleanup function
   }, [worker]);
 
-  const dialog = useSideModalState({});
 
   //For text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,16 +138,12 @@ const UpdateWorkerSideModal = ({ worker}: OwnProps) => {
       //Refresh redux
       let workers = await WorkerUtil.getWorkers();
       Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
-      console.log(PLUGIN_NAME, 'hide dialog', dialog);
-      dialog.hide();
+      resetWorker();
     }
   }
 
   return (
-    <SideModalContainer>
-      <SideModalButton variant="primary">
-        Edit
-      </SideModalButton>
+    <SideModalContainer state={dialogState}>
       <SideModal aria-label="Basic Side Modal">
         <SideModalHeader>
           <SideModalHeading>
@@ -156,7 +151,6 @@ const UpdateWorkerSideModal = ({ worker}: OwnProps) => {
           </SideModalHeading>
         </SideModalHeader>
         <SideModalBody>
-
 
           <Flex vertical padding="space20" grow>
             <Table variant="borderless">
