@@ -1,8 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-import { Button, Flex, Box, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Actions, withTheme, Manager } from '@twilio/flex-ui';
+import {
+  Button,
+  Flex,
+  Box,
+  Table,
+  THead,
+  TBody,
+  Th,
+  Tr,
+  Td,
+  SideModal,
+  SideModalHeader,
+  SideModalHeading,
+  SideModalBody,
+  SideModalFooter,
+  SideModalFooterActions,
+  SideModalContainer,
+  SideModalButton,
+  useSideModalState
+} from "@twilio-paste/core";
 
 import WorkerUtil from '../../utils/WorkerUtil';
 import { Actions as WorkerActions } from '../../states/reducer';
@@ -14,10 +33,9 @@ import { AppState, WorkerItem } from '../../states/types';
 
 interface OwnProps {
   worker: WorkerItem | undefined,
-  resetWorker: () => void
 }
 
-const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
+const UpdateWorkerSideModal = ({ worker}: OwnProps) => {
   const [changed, setChanged] = useState(false);
   const [fullName, setFullName] = useState('');
   const [agentId, setAgentId] = useState('');
@@ -29,13 +47,6 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
   const [location, setLocation] = useState('');
   const [agentAttr1, setAgentAttr1] = useState('');
 
-  const isOpen = useSelector(
-    (state: AppState) => {
-      const componentViewStates = state.flex.view.componentViewStates;
-      const dialogState = componentViewStates && componentViewStates.WorkerAttributes;
-      return dialogState && dialogState.isOpen;
-    }
-  );
 
   useEffect(() => {
     //console.log(PLUGIN_NAME, 'useEffect to update state from worker:', worker);
@@ -53,15 +64,7 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
     //No return cleanup function
   }, [worker]);
 
-
-  const handleClose = () => {
-    //Clear selectedWorker from parent component
-    resetWorker();
-    Actions.invokeAction('SetComponentState', {
-      name: 'WorkerAttributes',
-      state: { isOpen: false }
-    });
-  }
+  const dialog = useSideModalState({});
 
   //For text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,20 +139,25 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
       //Refresh redux
       let workers = await WorkerUtil.getWorkers();
       Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
-
-      handleClose();
+      console.log(PLUGIN_NAME, 'hide dialog', dialog);
+      dialog.hide();
     }
   }
 
   return (
-      // <SidePanel
-      //   displayName="AgentAttributesPanel"
-      //   className="agentAttrPanel"
-      //   title={<div>Agent Attributes</div>}
-      //   isHidden={!isOpen}
-      //   handleCloseClick={handleClose}
-      // >
-        <Box overflow='auto' height='auto' maxHeight='600px'>
+    <SideModalContainer>
+      <SideModalButton variant="primary">
+        Edit
+      </SideModalButton>
+      <SideModal aria-label="Basic Side Modal">
+        <SideModalHeader>
+          <SideModalHeading>
+            Agent Attributes
+          </SideModalHeading>
+        </SideModalHeader>
+        <SideModalBody>
+
+
           <Flex vertical padding="space20" grow>
             <Table variant="borderless">
               <THead>
@@ -170,27 +178,26 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
                 <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
                 <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
                 <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
-              
-                <FormRowSelect 
-                  id="team_name" 
-                  label="Team" 
-                  value={teamName} 
+
+                <FormRowSelect
+                  id="team_name"
+                  label="Team"
+                  value={teamName}
                   options={teams}
                   onChangeHandler={handleTeamChange} />
 
-                <FormRowSelect 
-                  id="department_name" 
-                  label="Dept." 
-                  value={departmentName} 
+                <FormRowSelect
+                  id="department_name"
+                  label="Dept."
+                  value={departmentName}
                   options={departments}
                   onChangeHandler={handleDeptChange} />
 
                 <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
                 <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
 
-                <Tr key='button'>
-                  <Td />
-                  <Td>
+                <SideModalFooter>
+                  <SideModalFooterActions>
                     <Button
                       variant="primary" size="small"
                       id="saveButton"
@@ -199,16 +206,17 @@ const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
                     >
                       Save
                     </Button>
-                  </Td>
-                </Tr>
+                  </SideModalFooterActions>
+                </SideModalFooter>
               </TBody>
             </Table>
-
           </Flex>
-        </Box>
-      // </SidePanel >
+        </SideModalBody>
+      </SideModal >
+    </SideModalContainer>
+
 
   );
 }
 
-export default withTheme(UpdateWorkerPanel);
+export default withTheme(UpdateWorkerSideModal);
