@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
-import { Theme } from '@twilio-paste/core/theme';
-import { Button, Input, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
-
-import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
-
+import { Actions } from '@twilio/flex-ui';
+import { Input, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
+import WorkerRow from './WorkerRow';
 import {
   TableSortLabel
 } from "@material-ui/core";
-
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
 
 const AgentAdminView = () => {
@@ -28,7 +24,6 @@ const AgentAdminView = () => {
       name: 'WorkerAttributes',
       state: { isOpen: true }
     });
-
   }
 
   const resetWorker = () => {
@@ -79,83 +74,65 @@ const AgentAdminView = () => {
   }
 
   return (
-    <Theme.Provider theme="flex">
-      <Box overflow='auto' maxHeight='100%'>
-        <Flex>
-          <Table>
-            <THead>
-              <Tr>
-                <Th>
-                  Worker Name
-                </Th>
-                <Th>
-                  <TableSortLabel
-                    active
-                    direction={nameSortValue}
-                    onClick={updateNameSort}
-                  >
-                    Full Name
-                  </TableSortLabel>
-                </Th>
-                <Th>
-                  <Flex width='size20' vAlignContent="center">
-                    <Label htmlFor="team_filter"> Team: &nbsp; </Label>
-                    <Flex width='size10'>
-                      <Input id="team_filter"
-                        type="text"
-                        size="small"
-                        label="Team"
-                        value={teamFilterValue}
-                        onChange={updateTeamFilter}
-                      /></Flex>
+    <Box overflow='auto' maxHeight='100%'>
+      <Flex>
+        <Table>
+          <THead>
+            <Tr>
+              <Th>
+                Worker Name
+              </Th>
+              <Th>
+                <TableSortLabel
+                  active
+                  direction={nameSortValue}
+                  onClick={updateNameSort}
+                >
+                  Full Name
+                </TableSortLabel>
+              </Th>
+              <Th>
+                <Flex width='size20' vAlignContent="center">
+                  <Label htmlFor="team_filter"> Team: &nbsp; </Label>
+                  <Flex width='size10'>
+                    <Input id="team_filter"
+                      type="text"
+                      size="small"
+                      label="Team"
+                      value={teamFilterValue}
+                      onChange={updateTeamFilter}
+                    /></Flex>
+                </Flex>
+              </Th>
+              <Th>Dept.</Th>
+              <Th>Location</Th>
+              <Th>
+                <Flex width='size20' vAlignContent="center">
+                  <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
+                  <Flex width='size10'>
+                    <Input id="skills_filter"
+                      type="text"
+                      size="small"
+                      label="Skills"
+                      value={skillsFilterValue}
+                      onChange={updateSkillsFilter}
+                    />
                   </Flex>
-                </Th>
-                <Th>Dept.</Th>
-                <Th>Location</Th>
-                <Th>
-                  <Flex width='size20' vAlignContent="center">
-                    <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
-                    <Flex width='size10'>
-                      <Input id="skills_filter"
-                        type="text"
-                        size="small"
-                        label="Skills"
-                        value={skillsFilterValue}
-                        onChange={updateSkillsFilter}
-                      />
-                    </Flex>
-                  </Flex>
-                </Th>
-                <Th> Action </Th>
-              </Tr>
-            </THead>
-            <TBody>
-              {sortedWorkers.map((wk) => (
-                <Tr key={wk.sid}>
-                  <Td> {wk.friendlyName} </Td>
-                  <Td> {wk.attributes.full_name} </Td>
-                  <Td>{wk.attributes.team_name} </Td>
-                  <Td> {wk.attributes.department_name} </Td>
-                  <Td> {wk.attributes.location} </Td>
-                  <Td> {wk.attributes.skillsString} </Td>
-                  <Td>
-                    <Button variant="primary_icon"
-                      onClick={() => {
-                        openEditWorkerAttr(wk);
-                      }}
-                    > <EditIcon decorative={false} title="Update" /> </Button>
-                  </Td>
-                </Tr>))}
-            </TBody>
-          </Table>
-
-
-          <WorkerAttributes key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
-        </Flex>
-      </Box>
-    </Theme.Provider>
+                </Flex>
+              </Th>
+              <Th> Action </Th>
+            </Tr>
+          </THead>
+          <TBody>
+            {sortedWorkers.map((wk) => (
+              <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
+            ))}
+          </TBody>
+        </Table>
+        <WorkerAttributes key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
+      </Flex>
+    </Box>
   );
 };
-//}
 
 export default AgentAdminView;

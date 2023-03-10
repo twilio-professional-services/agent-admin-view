@@ -2,6 +2,7 @@ import React from 'react';
 import { VERSION, View } from '@twilio/flex-ui';
 import { FlexPlugin } from '@twilio/flex-plugin';
 import reducers, { namespace } from './states';
+import { CustomizationProvider } from '@twilio-paste/core/customization';
 
 import AgentAdminViewNavButton from './components/AgentAdminViewNavButton';
 import AgentAdminView from './components/AgentAdminView/AgentAdminView';
@@ -23,6 +24,10 @@ export default class AgentAdminPlugin extends FlexPlugin {
    * @param manager { import('@twilio/flex-ui').Manager }
    */
   async init(flex, manager) {
+    flex.setProviders({
+      PasteThemeProvider: CustomizationProvider,
+    });
+    
     this.registerReducers(manager);
     
     const { roles } = manager.user;

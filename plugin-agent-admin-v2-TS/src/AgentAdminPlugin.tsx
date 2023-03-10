@@ -6,7 +6,8 @@ import reducers, { namespace } from './states';
 import { CustomizationProvider } from '@twilio-paste/core/customization';
 
 import AgentAdminViewNavButton from './components/AgentAdminViewNavButton';
-import AgentAdminView from './components/AgentAdminView/AgentAdminView';
+//Sidepanel has TypeScript issue. Use Paste Side Modal instead
+//import AgentAdminView from './components/AgentAdminView/AgentAdminView';
 import AgentAdminViewWithSideModal from './components/AgentAdminView/AgentAdminViewWithSideModal';
 import WorkerUtil from './utils/WorkerUtil';
 import { Actions as WorkerActions } from './states/reducer';

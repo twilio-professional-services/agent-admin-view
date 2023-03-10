@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
-import { Button, Input, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
-
-import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
+import { Actions } from '@twilio/flex-ui';
+import { Input, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
 import { AppState, WorkerItem } from '../../states/types';
-
-import {
-  TableSortLabel
-} from "@material-ui/core";
-import { namespace } from 'states';
-
-type SortDirection = 'asc' | 'desc'
-
-
+import WorkerRow from './WorkerRow';
+import { TableSortLabel } from "@material-ui/core";
+import { namespace } from '../../states';
 import UpdateWorkerPanel from '../UpdateWorkerPanel/UpdateWorkerPanel';
+
+type SortDirection = 'asc' | 'desc';
 
 const AgentAdminView = () => {
   const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
@@ -32,7 +26,6 @@ const AgentAdminView = () => {
       name: 'WorkerAttributes',
       state: { isOpen: true }
     });
-
   }
 
   const resetWorker = () => {
@@ -129,31 +122,16 @@ const AgentAdminView = () => {
               </Tr>
             </THead>
             <TBody>
-              {sortedWorkers.map((wk: WorkerItem) => (
-                <Tr key={wk.sid}>
-                  <Td> {wk.friendlyName} </Td>
-                  <Td> {wk.attributes.full_name} </Td>
-                  <Td>{wk.attributes.team_name} </Td>
-                  <Td> {wk.attributes.department_name} </Td>
-                  <Td> {wk.attributes.location} </Td>
-                  <Td> {wk.attributes.skillsString} </Td>
-                  <Td>
-                    <Button variant="primary_icon" id="updateButton" size="small"
-                      onClick={() => {
-                        openEditWorkerAttr(wk);
-                      }}
-                    > <EditIcon decorative={false} title="Update" /> </Button>
-                  </Td>
-                </Tr>))}
+            {sortedWorkers.map((wk: WorkerItem) => (
+              <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
+              ))}
             </TBody>
           </Table>
 
           <UpdateWorkerPanel key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
         </Flex>
       </Box>
-    
   );
 };
-//}
 
 export default AgentAdminView;

@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useSelector } from 'react-redux';
 import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-import { Theme } from '@twilio-paste/core/theme';
 import { Button, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
-
 import WorkerUtil from '../../utils/WorkerUtil';
-import { Actions as WorkerActions, ACTION_SET_WORKERS } from '../../states/WorkerListState';
+import { Actions as WorkerActions } from '../../states/WorkerListState';
 import FormRowText from './FormRowText';
 import FormRowSelect from './FormRowSelect';
-
 import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
 
 const WorkerAttributes = ({ worker, resetWorker }) => {
@@ -137,7 +133,6 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   }
 
   return (
-    <Theme.Provider theme="flex">
       <SidePanel
         displayName="AgentAttributesPanel"
         className="agentAttrPanel"
@@ -202,8 +197,6 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
           </Flex>
         </Box>
       </SidePanel >
-
-    </Theme.Provider >
   );
 }
 

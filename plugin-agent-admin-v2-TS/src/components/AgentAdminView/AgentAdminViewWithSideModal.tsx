@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
 import {
-  Button,
   Input,
   Flex,
   Box,
@@ -12,21 +10,16 @@ import {
   TBody,
   Th,
   Tr,
-  Td,
   useSideModalState
 } from "@twilio-paste/core";
 
-import { EditIcon } from "@twilio-paste/icons/esm/EditIcon";
 import { AppState, WorkerItem } from '../../states/types';
-
-import {
-  TableSortLabel
-} from "@material-ui/core";
+import WorkerRow from './WorkerRow';
+import { TableSortLabel } from "@material-ui/core";
 import { namespace } from '../../states';
+import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal';
 
-type SortDirection = 'asc' | 'desc'
-
-import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal'
+type SortDirection = 'asc' | 'desc';
 
 const AgentAdminViewWithSideModal = () => {
   const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
@@ -141,29 +134,13 @@ const AgentAdminViewWithSideModal = () => {
           </THead>
           <TBody>
             {sortedWorkers.map((wk: WorkerItem) => (
-              <Tr key={wk.sid}>
-                <Td> {wk.friendlyName} </Td>
-                <Td> {wk.attributes.full_name} </Td>
-                <Td>{wk.attributes.team_name} </Td>
-                <Td> {wk.attributes.department_name} </Td>
-                <Td> {wk.attributes.location} </Td>
-                <Td> {wk.attributes.skillsString} </Td>
-                <Td>
-                    <Button variant="primary_icon" id="updateButton" size="small"
-                      onClick={() => {
-                        openEditWorkerAttr(wk);
-                      }}
-                    > <EditIcon decorative={false} title="Update" /> </Button>
-                  </Td>
-              </Tr>))}
-         
-         
+              <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
+              ))}
           </TBody>
         </Table>
         <UpdateWorkerSideModal dialogState={dialog} worker={selectedWorker} resetWorker={resetWorker} />
       </Flex>
     </Box>
-
   );
 };
 
