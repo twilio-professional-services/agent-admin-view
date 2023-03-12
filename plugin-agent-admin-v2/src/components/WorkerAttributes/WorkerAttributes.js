@@ -133,70 +133,71 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   }
 
   return (
-      <SidePanel
-        displayName="AgentAttributesPanel"
-        className="agentAttrPanel"
-        title={<div>Agent Attributes</div>}
-        isHidden={!isOpen}
-        handleCloseClick={handleClose}
-      >
-        <Box overflow='auto' height='auto' maxHeight='600px'>
-          <Flex vertical padding="space20" grow>
-            <Table variant="borderless">
-              <THead>
-                <Tr>
-                  <Th> Attribute </Th>
-                  <Th> Value </Th>
-                </Tr>
-              </THead>
-              <TBody>
-                <Tr key='agent_name'>
-                  <Td>
-                    <Label> Name </Label>
-                  </Td>
-                  <Td>
-                    {worker?.friendlyName || "Agent"}
-                  </Td>
-                </Tr>
-                <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
-                <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
-                <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
-              
-                <FormRowSelect 
-                  id="team_name" 
-                  label="Team" 
-                  value={teamName} 
-                  options={teams}
-                  onChangeHandler={handleTeamChange} />
+    <SidePanel
+      displayName="AgentAttributesPanel"
+      className="agentAttrPanel"
+      title={<div>Agent Attributes</div>}
+      isHidden={!isOpen}
+      handleCloseClick={handleClose}
+    >
+      <Flex vertical padding="space20" grow>
+        <Box overflow='auto' height='auto' maxHeight='600px' width="100%">
 
-                <FormRowSelect 
-                  id="department_name" 
-                  label="Dept." 
-                  value={departmentName} 
-                  options={departments}
-                  onChangeHandler={handleDeptChange} />
+          <Table variant="borderless">
+            <THead>
+              <Tr>
+                <Th> Attribute </Th>
+                <Th> Value </Th>
+              </Tr>
+            </THead>
+            <TBody>
+              <Tr key='agent_name'>
+                <Td>
+                  <Label> Name </Label>
+                </Td>
+                <Td>
+                  {worker?.friendlyName || "Agent"}
+                </Td>
+              </Tr>
+              <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
+              <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
+              <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
 
-                <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
-                <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
+              <FormRowSelect
+                id="team_name"
+                label="Team"
+                value={teamName}
+                options={teams}
+                onChangeHandler={handleTeamChange} />
 
-                <Tr key='button'>
-                  <Td />
-                  <Td>
-                    <Button
-                      id="saveButton"
-                      onClick={saveWorkerAttributes}
-                      disabled={!changed}
-                    >
-                      Save
-                    </Button>
-                  </Td>
-                </Tr>
-              </TBody>
-            </Table>
+              <FormRowSelect
+                id="department_name"
+                label="Dept."
+                value={departmentName}
+                options={departments}
+                onChangeHandler={handleDeptChange} />
 
-          </Flex>
+              <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
+              <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
+
+              <Tr key='button'>
+                <Td />
+                <Td>
+                  <Button
+                    id="saveButton"
+                    onClick={saveWorkerAttributes}
+                    disabled={!changed}
+                  >
+                    Save
+                  </Button>
+                </Td>
+              </Tr>
+            </TBody>
+          </Table>
         </Box>
-      </SidePanel >
+      </Flex>
+
+    </SidePanel >
   );
 }
 

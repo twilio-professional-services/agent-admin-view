@@ -152,58 +152,61 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
         </SideModalHeader>
         <SideModalBody>
 
-          <Flex vertical padding="space20" grow>
-            <Table variant="borderless">
-              <THead>
-                <Tr>
-                  <Th> Attribute </Th>
-                  <Th> Value </Th>
-                </Tr>
-              </THead>
-              <TBody>
-                <Tr key='agent_name'>
-                  <Td>
-                    Name
-                  </Td>
-                  <Td>
-                    {worker?.friendlyName || "Agent"}
-                  </Td>
-                </Tr>
-                <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
-                <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
-                <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
+          <Flex vertical padding="space20" grow width="100%">
+            <Box width="100%">
+              <Table variant="borderless">
+                <THead>
+                  <Tr>
+                    <Th> Attribute </Th>
+                    <Th> Value </Th>
+                  </Tr>
+                </THead>
+                <TBody>
+                  <Tr key='agent_name'>
+                    <Td>
+                      Name
+                    </Td>
+                    <Td>
+                      {worker?.friendlyName || "Agent"}
+                    </Td>
+                  </Tr>
+                  <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
+                  <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
+                  <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
 
-                <FormRowSelect
-                  id="team_name"
-                  label="Team"
-                  value={teamName}
-                  options={teams}
-                  onChangeHandler={handleTeamChange} />
+                  <FormRowSelect
+                    id="team_name"
+                    label="Team"
+                    value={teamName}
+                    options={teams}
+                    onChangeHandler={handleTeamChange} />
 
-                <FormRowSelect
-                  id="department_name"
-                  label="Dept."
-                  value={departmentName}
-                  options={departments}
-                  onChangeHandler={handleDeptChange} />
+                  <FormRowSelect
+                    id="department_name"
+                    label="Dept."
+                    value={departmentName}
+                    options={departments}
+                    onChangeHandler={handleDeptChange} />
 
-                <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
-                <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
+                  <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
+                  <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
 
-                <SideModalFooter>
-                  <SideModalFooterActions>
-                    <Button
-                      variant="primary" size="small"
-                      id="saveButton"
-                      onClick={saveWorkerAttributes}
-                      disabled={!changed}
-                    >
-                      Save
-                    </Button>
-                  </SideModalFooterActions>
-                </SideModalFooter>
-              </TBody>
-            </Table>
+                </TBody>
+              </Table>
+
+              <SideModalFooter>
+                <SideModalFooterActions>
+                  <Button
+                    variant="primary" size="small"
+                    id="saveButton"
+                    onClick={saveWorkerAttributes}
+                    disabled={!changed}
+                  >
+                    Save
+                  </Button>
+                </SideModalFooterActions>
+              </SideModalFooter>
+            </Box>
           </Flex>
         </SideModalBody>
       </SideModal >

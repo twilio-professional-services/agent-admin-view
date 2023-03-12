@@ -76,8 +76,9 @@ const AgentAdminView = () => {
   }
 
   return (
-      <Box overflow='auto' maxHeight='100%'>
-        <Flex>
+      <Flex width="100%">
+        <Flex grow width="100%">
+        <Box overflow='auto' maxHeight='100%' width="100%">
           <Table>
             <THead>
               <Tr>
@@ -127,10 +128,12 @@ const AgentAdminView = () => {
               ))}
             </TBody>
           </Table>
-
+          </Box>
+          </Flex>
           <UpdateWorkerPanel key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
+        
         </Flex>
-      </Box>
+     
   );
 };
 

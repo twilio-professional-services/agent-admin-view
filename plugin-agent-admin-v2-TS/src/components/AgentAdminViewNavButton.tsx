@@ -18,8 +18,10 @@ const AgentAdminViewNavButton = (props: OwnProps) => {
             icon="Cogs"
             iconActive="Cogs"
             isActive={props.viewName === props.activeView}
-            onClick={navigate}
-        />
+            onClick={navigate} >
+            Agent Admin 
+        </SideLink>
+        
     )
 }
 export default AgentAdminViewNavButton;
