@@ -92,65 +92,65 @@ const AgentAdminViewWithSideModal = () => {
 
   return (
     <ScrollWrapper>
-      <Flex  width="100%">
-      <Flex grow width="100%">
-        <Box overflow='auto' maxHeight='100%' width="100%">
-          <Table tableLayout="fixed">
-            <THead>
-              <Tr>
-                <Th>
-                  Worker Name
-                </Th>
-                <Th>
-                  <TableSortLabel
-                    active
-                    direction={nameSortValue}
-                    onClick={updateNameSort}
-                  >
-                    Full Name
-                  </TableSortLabel>
-                </Th>
-                <Th>
-                  <Flex width='size20' vAlignContent="center">
-                    <Label htmlFor="team_filter"> Team: &nbsp; </Label>
-                    <Flex width='size10'>
-                      <Input id="team_filter"
-                        type="text"
-                        value={teamFilterValue}
-                        onChange={updateTeamFilter}
-                      /></Flex>
-                  </Flex>
-                </Th>
-                <Th>Dept.</Th>
-                <Th>Location</Th>
-                <Th>
-                  <Flex width='size20' vAlignContent="center">
-                    <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
-                    <Flex width='size10'>
-                      <Input id="skills_filter"
-                        type="text"
-                        value={skillsFilterValue}
-                        onChange={updateSkillsFilter}
-                      />
+      <Flex width="100%">
+        <Flex grow width="100%">
+          <Box overflowY='auto' maxHeight='700px' width="100%">
+            <Table tableLayout="fixed">
+              <THead stickyHeader top={0}>
+                <Tr>
+                  <Th>
+                    Worker Name
+                  </Th>
+                  <Th>
+                    <TableSortLabel
+                      active
+                      direction={nameSortValue}
+                      onClick={updateNameSort}
+                    >
+                      Full Name
+                    </TableSortLabel>
+                  </Th>
+                  <Th>
+                    <Flex width='size20' vAlignContent="center">
+                      <Label htmlFor="team_filter"> Team: &nbsp; </Label>
+                      <Flex width='size10'>
+                        <Input id="team_filter"
+                          type="text"
+                          value={teamFilterValue}
+                          onChange={updateTeamFilter}
+                        /></Flex>
                     </Flex>
-                  </Flex>
-                </Th>
-                <Th> Action </Th>
-              </Tr>
-            </THead>
-            <TBody>
-              {sortedWorkers.map((wk: WorkerItem) => (
-                <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
-              ))}
-            </TBody>
-          </Table>
-        </Box>
+                  </Th>
+                  <Th>Dept.</Th>
+                  <Th>Location</Th>
+                  <Th>
+                    <Flex width='size20' vAlignContent="center">
+                      <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
+                      <Flex width='size10'>
+                        <Input id="skills_filter"
+                          type="text"
+                          value={skillsFilterValue}
+                          onChange={updateSkillsFilter}
+                        />
+                      </Flex>
+                    </Flex>
+                  </Th>
+                  <Th> Action </Th>
+                </Tr>
+              </THead>
+              <TBody>
+                {sortedWorkers.map((wk: WorkerItem) => (
+                  <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
+                ))}
+              </TBody>
+            </Table>
+          </Box>
+        </Flex>
+
+        <UpdateWorkerSideModal dialogState={dialog} worker={selectedWorker} resetWorker={resetWorker} />
       </Flex>
-      
-      <UpdateWorkerSideModal dialogState={dialog} worker={selectedWorker} resetWorker={resetWorker} />
-    </Flex>
     </ScrollWrapper>
-    
+
   );
 };
 

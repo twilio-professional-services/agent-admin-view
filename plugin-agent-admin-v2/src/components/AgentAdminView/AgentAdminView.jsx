@@ -81,9 +81,9 @@ const AgentAdminView = () => {
     <ScrollWrapper>
       <Flex width="100%">
         <Flex grow width="100%">
-          <Box overflow='auto' maxHeight='100%' width="100%">
+          <Box overflowY='auto' maxHeight='700px' width="100%">
             <Table tableLayout="fixed">
-              <THead>
+              <THead stickyHeader top={0}>
                 <Tr>
                   <Th>
                     Worker Name
