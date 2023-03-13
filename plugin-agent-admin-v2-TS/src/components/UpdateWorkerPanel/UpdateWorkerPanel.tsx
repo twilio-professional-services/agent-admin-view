@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-import { Button, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Button, Flex, Box, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+
 import WorkerUtil from '../../utils/WorkerUtil';
-import { Actions as WorkerActions } from '../../states/WorkerListState';
+import { Actions as WorkerActions } from '../../states/reducer';
 import FormRowText from './FormRowText';
 import FormRowSelect from './FormRowSelect';
-import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
 
-const WorkerAttributes = ({ worker, resetWorker }) => {
+import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
+import { AppState, WorkerItem } from '../../states/types';
+
+interface OwnProps {
+  worker: WorkerItem | undefined,
+  resetWorker: () => void
+}
+
+const UpdateWorkerPanel = ({ worker, resetWorker }: OwnProps) => {
   const [changed, setChanged] = useState(false);
   const [fullName, setFullName] = useState('');
   const [agentId, setAgentId] = useState('');
@@ -21,7 +30,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   const [agentAttr1, setAgentAttr1] = useState('');
 
   const isOpen = useSelector(
-    state => {
+    (state: AppState) => {
       const componentViewStates = state.flex.view.componentViewStates;
       const dialogState = componentViewStates && componentViewStates.WorkerAttributes;
       return dialogState && dialogState.isOpen;
@@ -55,7 +64,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   }
 
   //For text input fields
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('change event ', e.target);
     const value = e.target.value;
     //Text Field id needs to match State property
@@ -90,7 +99,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   // and similarly to set department_id/name to the same values
 
 
-  const handleTeamChange = (e) => {
+  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setChanged(true);
     const team = e.target.value;
     //Store team in both team_id and team_name for consistent reporting
@@ -98,7 +107,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
     setTeamName(team);
   }
 
-  const handleDeptChange = (e) => {
+  const handleDeptChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setChanged(true);
     const dept = e.target.value;
     //Store dept in both department_id and department_name for consistent reporting
@@ -142,7 +151,6 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
     >
       <Flex vertical padding="space20" grow>
         <Box overflow='auto' height='auto' maxHeight='600px' width="100%">
-
           <Table variant="borderless">
             <THead>
               <Tr>
@@ -153,7 +161,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
             <TBody>
               <Tr key='agent_name'>
                 <Td>
-                  <Label> Name </Label>
+                  Name
                 </Td>
                 <Td>
                   {worker?.friendlyName || "Agent"}
@@ -184,6 +192,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
                 <Td />
                 <Td>
                   <Button
+                    variant="primary" size="small"
                     id="saveButton"
                     onClick={saveWorkerAttributes}
                     disabled={!changed}
@@ -196,9 +205,8 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
           </Table>
         </Box>
       </Flex>
-
-    </SidePanel >
+    </SidePanel>
   );
 }
 
-export default withTheme(WorkerAttributes);
+export default withTheme(UpdateWorkerPanel);

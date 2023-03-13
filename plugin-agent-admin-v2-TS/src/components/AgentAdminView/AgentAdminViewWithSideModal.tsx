@@ -1,65 +1,78 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Actions, styled } from '@twilio/flex-ui';
-import { Input, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
-import WorkerRow from './WorkerRow';
+import { styled } from '@twilio/flex-ui';
 import {
-  TableSortLabel
-} from "@material-ui/core";
-import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
+  Input,
+  Flex,
+  Box,
+  Label,
+  Table,
+  THead,
+  TBody,
+  Th,
+  Tr,
+  useSideModalState
+} from "@twilio-paste/core";
+
+import { AppState, WorkerItem } from '../../states/types';
+import WorkerRow from './WorkerRow';
+import { TableSortLabel } from "@material-ui/core";
+import { namespace } from '../../states';
+import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal';
 
 const ScrollWrapper = styled('div')`
   overflow: auto;
 `;
+type SortDirection = 'asc' | 'desc';
 
-const AgentAdminView = () => {
-  const [selectedWorker, setSelectedWorker] = useState('');
+const AgentAdminViewWithSideModal = () => {
+  const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
   const [sort, setSort] = useState({ name: "asc" })
   const [teamFilterValue, setTeamFilterValue] = useState('');
   const [skillsFilterValue, setSkillsFilterValue] = useState('');
 
   const workers = useSelector(
-    state => { return state['agent-admin']?.workerList?.workers || [] }
+    (state: AppState) => { return state[namespace]?.workerList?.workers || [] }
   );
 
-  const openEditWorkerAttr = (worker) => {
+  const dialog = useSideModalState({});
+
+  const openEditWorkerAttr = (worker: WorkerItem) => {
     setSelectedWorker(worker);
-    Actions.invokeAction('SetComponentState', {
-      name: 'WorkerAttributes',
-      state: { isOpen: true }
-    });
+    dialog.show();
   }
 
   const resetWorker = () => {
-    setSelectedWorker('');
+    setSelectedWorker(undefined);
+    dialog.hide();
   }
 
-  const updateTeamFilter = (e) => {
+  const updateTeamFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const teamFilter = e.target.value.replace(/\s/g, "");
     setTeamFilterValue(teamFilter);
   };
 
-  const filterByTeam = (worker) => {
+  const filterByTeam = (worker: WorkerItem) => {
     return (!teamFilterValue || !worker.attributes.team_name ||
       worker.attributes.team_name.includes(teamFilterValue));
   }
 
-  const updateSkillsFilter = (e) => {
+  const updateSkillsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const skillsFilter = e.target.value.replace(/\s/g, "");
     setSkillsFilterValue(skillsFilter);
   };
 
-  const filterBySkills = (worker) => {
+  const filterBySkills = (worker: WorkerItem) => {
     return (!skillsFilterValue || !worker.attributes.skillsString ||
       worker.attributes.skillsString.includes(skillsFilterValue));
   }
 
-  const updateNameSort = (e) => {
+  const updateNameSort = () => {
     const newSortOrder = sort.name === "asc" ? "desc" : "asc";
     setSort({ name: newSortOrder });
   };
 
-  const sortByName = (v1, v2) => {
+  const sortByName = (v1: WorkerItem, v2: WorkerItem) => {
     const result =
       sort.name === "asc"
         ? v1.attributes.full_name < v2.attributes.full_name ? 1 : -1
@@ -67,9 +80,9 @@ const AgentAdminView = () => {
     return result;
   };
 
-  const nameSortValue = sort.name;
+  const nameSortValue = sort.name as SortDirection;
 
-  let sortedWorkers = [];
+  let sortedWorkers: Array<WorkerItem> = [];
   if (workers && workers.length > 1) {
     sortedWorkers = workers
       .filter(filterByTeam)
@@ -103,8 +116,6 @@ const AgentAdminView = () => {
                       <Flex width='size10'>
                         <Input id="team_filter"
                           type="text"
-                          size="small"
-                          label="Team"
                           value={teamFilterValue}
                           onChange={updateTeamFilter}
                         /></Flex>
@@ -118,8 +129,6 @@ const AgentAdminView = () => {
                       <Flex width='size10'>
                         <Input id="skills_filter"
                           type="text"
-                          size="small"
-                          label="Skills"
                           value={skillsFilterValue}
                           onChange={updateSkillsFilter}
                         />
@@ -130,17 +139,19 @@ const AgentAdminView = () => {
                 </Tr>
               </THead>
               <TBody>
-                {sortedWorkers.map((wk) => (
+                {sortedWorkers.map((wk: WorkerItem) => (
                   <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
                 ))}
               </TBody>
             </Table>
           </Box>
         </Flex>
-        <WorkerAttributes key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
+
+        <UpdateWorkerSideModal dialogState={dialog} worker={selectedWorker} resetWorker={resetWorker} />
       </Flex>
     </ScrollWrapper>
+
   );
 };
 
-export default AgentAdminView;
+export default AgentAdminViewWithSideModal;

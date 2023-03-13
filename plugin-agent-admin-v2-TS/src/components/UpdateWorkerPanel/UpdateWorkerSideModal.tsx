@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Actions, withTheme, Manager, SidePanel } from '@twilio/flex-ui';
-import { Button, Flex, Box, Label, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { useSelector, useDispatch } from 'react-redux';
+
+import { Actions, withTheme, Manager } from '@twilio/flex-ui';
+import {
+  Button,
+  Flex,
+  Box,
+  Table,
+  THead,
+  TBody,
+  Th,
+  Tr,
+  Td,
+  SideModal,
+  SideModalHeader,
+  SideModalHeading,
+  SideModalBody,
+  SideModalFooter,
+  SideModalFooterActions,
+  SideModalContainer
+} from "@twilio-paste/core";
+
 import WorkerUtil from '../../utils/WorkerUtil';
-import { Actions as WorkerActions } from '../../states/WorkerListState';
+import { Actions as WorkerActions } from '../../states/reducer';
 import FormRowText from './FormRowText';
 import FormRowSelect from './FormRowSelect';
-import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
 
-const WorkerAttributes = ({ worker, resetWorker }) => {
+import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
+import { WorkerItem } from '../../states/types';
+
+interface OwnProps {
+  worker: WorkerItem | undefined,
+  resetWorker: () => void,
+  dialogState: any
+}
+
+const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) => {
   const [changed, setChanged] = useState(false);
   const [fullName, setFullName] = useState('');
   const [agentId, setAgentId] = useState('');
@@ -20,13 +47,6 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   const [location, setLocation] = useState('');
   const [agentAttr1, setAgentAttr1] = useState('');
 
-  const isOpen = useSelector(
-    state => {
-      const componentViewStates = state.flex.view.componentViewStates;
-      const dialogState = componentViewStates && componentViewStates.WorkerAttributes;
-      return dialogState && dialogState.isOpen;
-    }
-  );
 
   useEffect(() => {
     //console.log(PLUGIN_NAME, 'useEffect to update state from worker:', worker);
@@ -45,17 +65,8 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   }, [worker]);
 
 
-  const handleClose = () => {
-    //Clear selectedWorker from parent component
-    resetWorker();
-    Actions.invokeAction('SetComponentState', {
-      name: 'WorkerAttributes',
-      state: { isOpen: false }
-    });
-  }
-
   //For text input fields
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('change event ', e.target);
     const value = e.target.value;
     //Text Field id needs to match State property
@@ -90,7 +101,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
   // and similarly to set department_id/name to the same values
 
 
-  const handleTeamChange = (e) => {
+  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setChanged(true);
     const team = e.target.value;
     //Store team in both team_id and team_name for consistent reporting
@@ -98,7 +109,7 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
     setTeamName(team);
   }
 
-  const handleDeptChange = (e) => {
+  const handleDeptChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setChanged(true);
     const dept = e.target.value;
     //Store dept in both department_id and department_name for consistent reporting
@@ -127,78 +138,82 @@ const WorkerAttributes = ({ worker, resetWorker }) => {
       //Refresh redux
       let workers = await WorkerUtil.getWorkers();
       Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
-
-      handleClose();
+      resetWorker();
     }
   }
 
   return (
-    <SidePanel
-      displayName="AgentAttributesPanel"
-      className="agentAttrPanel"
-      title={<div>Agent Attributes</div>}
-      isHidden={!isOpen}
-      handleCloseClick={handleClose}
-    >
-      <Flex vertical padding="space20" grow>
-        <Box overflow='auto' height='auto' maxHeight='600px' width="100%">
+    <SideModalContainer state={dialogState}>
+      <SideModal aria-label="Basic Side Modal">
+        <SideModalHeader>
+          <SideModalHeading>
+            Agent Attributes
+          </SideModalHeading>
+        </SideModalHeader>
+        <SideModalBody>
 
-          <Table variant="borderless">
-            <THead>
-              <Tr>
-                <Th> Attribute </Th>
-                <Th> Value </Th>
-              </Tr>
-            </THead>
-            <TBody>
-              <Tr key='agent_name'>
-                <Td>
-                  <Label> Name </Label>
-                </Td>
-                <Td>
-                  {worker?.friendlyName || "Agent"}
-                </Td>
-              </Tr>
-              <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
-              <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
-              <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
+          <Flex vertical padding="space20" grow width="100%">
+            <Box width="100%">
+              <Table variant="borderless">
+                <THead>
+                  <Tr>
+                    <Th> Attribute </Th>
+                    <Th> Value </Th>
+                  </Tr>
+                </THead>
+                <TBody>
+                  <Tr key='agent_name'>
+                    <Td>
+                      Name
+                    </Td>
+                    <Td>
+                      {worker?.friendlyName || "Agent"}
+                    </Td>
+                  </Tr>
+                  <FormRowText id="full_name" label="Full Name" value={fullName} onChangeHandler={handleChange} />
+                  <FormRowText id="agent_id" label="Agent Id" value={agentId} onChangeHandler={handleChange} />
+                  <FormRowText id="manager_name" label="Manager" value={managerName} onChangeHandler={handleChange} />
 
-              <FormRowSelect
-                id="team_name"
-                label="Team"
-                value={teamName}
-                options={teams}
-                onChangeHandler={handleTeamChange} />
+                  <FormRowSelect
+                    id="team_name"
+                    label="Team"
+                    value={teamName}
+                    options={teams}
+                    onChangeHandler={handleTeamChange} />
 
-              <FormRowSelect
-                id="department_name"
-                label="Dept."
-                value={departmentName}
-                options={departments}
-                onChangeHandler={handleDeptChange} />
+                  <FormRowSelect
+                    id="department_name"
+                    label="Dept."
+                    value={departmentName}
+                    options={departments}
+                    onChangeHandler={handleDeptChange} />
 
-              <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
-              <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
+                  <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
+                  <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
 
-              <Tr key='button'>
-                <Td />
-                <Td>
+                </TBody>
+              </Table>
+
+              <SideModalFooter>
+                <SideModalFooterActions>
                   <Button
+                    variant="primary" size="small"
                     id="saveButton"
                     onClick={saveWorkerAttributes}
                     disabled={!changed}
                   >
                     Save
                   </Button>
-                </Td>
-              </Tr>
-            </TBody>
-          </Table>
-        </Box>
-      </Flex>
+                </SideModalFooterActions>
+              </SideModalFooter>
+            </Box>
+          </Flex>
+        </SideModalBody>
+      </SideModal >
+    </SideModalContainer>
 
-    </SidePanel >
+
   );
 }
 
-export default withTheme(WorkerAttributes);
+export default withTheme(UpdateWorkerSideModal);
