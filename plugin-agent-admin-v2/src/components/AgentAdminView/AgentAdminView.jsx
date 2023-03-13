@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Actions } from '@twilio/flex-ui';
+import { Actions, styled } from '@twilio/flex-ui';
 import { Input, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
 import WorkerRow from './WorkerRow';
 import {
   TableSortLabel
 } from "@material-ui/core";
 import WorkerAttributes from '../WorkerAttributes/WorkerAttributes';
+
+const ScrollWrapper = styled('div')`
+  overflow: auto;
+`;
 
 const AgentAdminView = () => {
   const [selectedWorker, setSelectedWorker] = useState('');
@@ -74,66 +78,68 @@ const AgentAdminView = () => {
   }
 
   return (
-    <Flex width="100%">
-      <Flex grow width="100%">
-        <Box overflow='auto' maxHeight='100%' width="100%">
-          <Table>
-            <THead>
-              <Tr>
-                <Th>
-                  Worker Name
-                </Th>
-                <Th>
-                  <TableSortLabel
-                    active
-                    direction={nameSortValue}
-                    onClick={updateNameSort}
-                  >
-                    Full Name
-                  </TableSortLabel>
-                </Th>
-                <Th>
-                  <Flex width='size20' vAlignContent="center">
-                    <Label htmlFor="team_filter"> Team: &nbsp; </Label>
-                    <Flex width='size10'>
-                      <Input id="team_filter"
-                        type="text"
-                        size="small"
-                        label="Team"
-                        value={teamFilterValue}
-                        onChange={updateTeamFilter}
-                      /></Flex>
-                  </Flex>
-                </Th>
-                <Th>Dept.</Th>
-                <Th>Location</Th>
-                <Th>
-                  <Flex width='size20' vAlignContent="center">
-                    <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
-                    <Flex width='size10'>
-                      <Input id="skills_filter"
-                        type="text"
-                        size="small"
-                        label="Skills"
-                        value={skillsFilterValue}
-                        onChange={updateSkillsFilter}
-                      />
+    <ScrollWrapper>
+      <Flex width="100%">
+        <Flex grow width="100%">
+          <Box overflow='auto' maxHeight='100%' width="100%">
+            <Table tableLayout="fixed">
+              <THead>
+                <Tr>
+                  <Th>
+                    Worker Name
+                  </Th>
+                  <Th>
+                    <TableSortLabel
+                      active
+                      direction={nameSortValue}
+                      onClick={updateNameSort}
+                    >
+                      Full Name
+                    </TableSortLabel>
+                  </Th>
+                  <Th>
+                    <Flex width='size20' vAlignContent="center">
+                      <Label htmlFor="team_filter"> Team: &nbsp; </Label>
+                      <Flex width='size10'>
+                        <Input id="team_filter"
+                          type="text"
+                          size="small"
+                          label="Team"
+                          value={teamFilterValue}
+                          onChange={updateTeamFilter}
+                        /></Flex>
                     </Flex>
-                  </Flex>
-                </Th>
-                <Th> Action </Th>
-              </Tr>
-            </THead>
-            <TBody>
-              {sortedWorkers.map((wk) => (
-                <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
-              ))}
-            </TBody>
-          </Table>
-        </Box>
+                  </Th>
+                  <Th>Dept.</Th>
+                  <Th>Location</Th>
+                  <Th>
+                    <Flex width='size20' vAlignContent="center">
+                      <Label htmlFor="skills_filter"> Skills: &nbsp; </Label>
+                      <Flex width='size10'>
+                        <Input id="skills_filter"
+                          type="text"
+                          size="small"
+                          label="Skills"
+                          value={skillsFilterValue}
+                          onChange={updateSkillsFilter}
+                        />
+                      </Flex>
+                    </Flex>
+                  </Th>
+                  <Th> Action </Th>
+                </Tr>
+              </THead>
+              <TBody>
+                {sortedWorkers.map((wk) => (
+                  <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
+                ))}
+              </TBody>
+            </Table>
+          </Box>
+        </Flex>
+        <WorkerAttributes key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
       </Flex>
-      <WorkerAttributes key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
-    </Flex>
+    </ScrollWrapper>
   );
 };
 

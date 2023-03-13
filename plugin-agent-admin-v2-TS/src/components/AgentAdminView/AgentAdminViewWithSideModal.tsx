@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { styled } from '@twilio/flex-ui';
 import {
   Input,
   Flex,
@@ -19,6 +20,9 @@ import { TableSortLabel } from "@material-ui/core";
 import { namespace } from '../../states';
 import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal';
 
+const ScrollWrapper = styled('div')`
+  overflow: auto;
+`;
 type SortDirection = 'asc' | 'desc';
 
 const AgentAdminViewWithSideModal = () => {
@@ -87,10 +91,11 @@ const AgentAdminViewWithSideModal = () => {
   }
 
   return (
-    <Flex  width="100%">
+    <ScrollWrapper>
+      <Flex  width="100%">
       <Flex grow width="100%">
         <Box overflow='auto' maxHeight='100%' width="100%">
-          <Table>
+          <Table tableLayout="fixed">
             <THead>
               <Tr>
                 <Th>
@@ -141,8 +146,11 @@ const AgentAdminViewWithSideModal = () => {
           </Table>
         </Box>
       </Flex>
+      
       <UpdateWorkerSideModal dialogState={dialog} worker={selectedWorker} resetWorker={resetWorker} />
     </Flex>
+    </ScrollWrapper>
+    
   );
 };
 

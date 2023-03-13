@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Actions } from '@twilio/flex-ui';
+import { Actions, styled } from '@twilio/flex-ui';
 import { Input, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
 import { AppState, WorkerItem } from '../../states/types';
 import WorkerRow from './WorkerRow';
 import { TableSortLabel } from "@material-ui/core";
 import { namespace } from '../../states';
 import UpdateWorkerPanel from '../UpdateWorkerPanel/UpdateWorkerPanel';
+
+const ScrollWrapper = styled('div')`
+  overflow: auto;
+`;
 
 type SortDirection = 'asc' | 'desc';
 
@@ -76,10 +80,11 @@ const AgentAdminView = () => {
   }
 
   return (
+    <ScrollWrapper>
       <Flex width="100%">
         <Flex grow width="100%">
         <Box overflow='auto' maxHeight='100%' width="100%">
-          <Table>
+          <Table tableLayout="fixed">
             <THead>
               <Tr>
                 <Th>
@@ -133,7 +138,7 @@ const AgentAdminView = () => {
           <UpdateWorkerPanel key="worker-attributes" worker={selectedWorker} resetWorker={resetWorker} />
         
         </Flex>
-     
+        </ScrollWrapper>
   );
 };
 
