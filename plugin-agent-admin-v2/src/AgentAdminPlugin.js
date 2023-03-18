@@ -48,7 +48,7 @@ export default class AgentAdminPlugin extends FlexPlugin {
     let workers = await WorkerUtil.getWorkers();
     console.log(PLUGIN_NAME, 'Workers data: ', workers);
     manager.store.dispatch(WorkerActions.setWorkers(workers));
-
+    console.log(PLUGIN_NAME, 'FLEX:', flex);
   }
 
   /**

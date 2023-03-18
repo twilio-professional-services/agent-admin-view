@@ -1,4 +1,5 @@
 export const PLUGIN_NAME = 'AgentAdminPlugin';
+export const capacityOptions = ["0", "1", "2", "3", "4", "5"];
 
 //Sample teams
 export const teams = [

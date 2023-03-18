@@ -26,13 +26,22 @@ import { Actions as WorkerActions } from '../../states/reducer';
 import FormRowText from './FormRowText';
 import FormRowSelect from './FormRowSelect';
 
-import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
-import { WorkerItem } from '../../states/types';
+import { PLUGIN_NAME, capacityOptions, teams, departments } from '../../utils/constants';
+import { WorkerChannelCapacityResponse, WorkerItem } from '../../states/types';
+
+import WorkerChannelsUtil from '../../utils/WorkerChannelsUtil';
+import WorkerChannelCapacity from './WorkerChannelCapacity';
 
 interface OwnProps {
   worker: WorkerItem | undefined,
   resetWorker: () => void,
   dialogState: any
+}
+
+interface ChannelSettings {
+  changed: boolean;
+  available: boolean;
+  capacity: number;
 }
 
 const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) => {
@@ -47,6 +56,8 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
   const [location, setLocation] = useState('');
   const [agentAttr1, setAgentAttr1] = useState('');
 
+  const [workerChannels, setWorkerChannels] = useState([] as WorkerChannelCapacityResponse[]);
+  const [channelSettings, setChannelSettings] = useState({} as { [key: string]: ChannelSettings });
 
   useEffect(() => {
     //console.log(PLUGIN_NAME, 'useEffect to update state from worker:', worker);
@@ -64,6 +75,18 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
     //No return cleanup function
   }, [worker]);
 
+  useEffect(() => {
+    listChannels();
+  }, [worker?.sid]);
+
+  const listChannels = async () => {
+    if (!worker) return;
+
+    let workerChannels: Array<WorkerChannelCapacityResponse> = await WorkerChannelsUtil.getWorkerChannels(worker.sid);
+    let filteredChannels = workerChannels.filter(channel => ( ["voice", "sms", "chat"].includes(channel.taskChannelUniqueName)));
+    console.log(PLUGIN_NAME, 'Channels:' , filteredChannels);
+    setWorkerChannels(filteredChannels);
+  }
 
   //For text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,8 +161,28 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
       //Refresh redux
       let workers = await WorkerUtil.getWorkers();
       Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
+      
+      await Promise.all(Object.keys(channelSettings).map((workerChannelSid) => {
+        const settings = channelSettings[workerChannelSid];
+        if (!settings.changed || !worker) {
+          // only make the API call if something actually changed
+          return;
+        }
+        return WorkerChannelsUtil.updateWorkerChannelCapacity(workerSid, workerChannelSid, settings.capacity, settings.available);
+      }));
       resetWorker();
     }
+  }
+
+  const channelSettingsChanged = (workerChannelSid: string, hasChanged: boolean, newAvailable: boolean, newCapacity: number) => {
+    setChannelSettings(workerChannelChanges => ({
+      ...workerChannelChanges,
+      [workerChannelSid]: {
+        changed: hasChanged,
+        available: newAvailable,
+        capacity: newCapacity
+      }
+    }));
   }
 
   return (
@@ -190,25 +233,35 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
 
                   <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
                   <FormRowText id="agent_attribute_1" label="Custom 1" value={agentAttr1} onChangeHandler={handleChange} />
-
+                  
+                  {workerChannels.length > 0 && workerChannels.map((workerChannel) => (
+                    <WorkerChannelCapacity
+                      workerChannelSid={workerChannel.sid}
+                      taskChannelName={workerChannel.taskChannelUniqueName}
+                      options={capacityOptions}
+                      channelSettingsChanged={channelSettingsChanged}
+                      key={workerChannel.sid}
+                    />
+                  ))
+                  }
                 </TBody>
               </Table>
 
-              <SideModalFooter>
-                <SideModalFooterActions>
-                  <Button
-                    variant="primary" size="small"
-                    id="saveButton"
-                    onClick={saveWorkerAttributes}
-                    disabled={!changed}
-                  >
-                    Save
-                  </Button>
-                </SideModalFooterActions>
-              </SideModalFooter>
             </Box>
           </Flex>
         </SideModalBody>
+        <SideModalFooter>
+          <SideModalFooterActions>
+            <Button
+              variant="primary" size="small"
+              id="saveButton"
+              onClick={saveWorkerAttributes}
+              // disabled={!changed}
+            >
+              Save
+            </Button>
+          </SideModalFooterActions>
+        </SideModalFooter>
       </SideModal >
     </SideModalContainer>
 

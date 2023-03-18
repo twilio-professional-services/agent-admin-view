@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Actions, styled } from '@twilio/flex-ui';
-import { Input, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
+import { Input, Checkbox, Flex, Box, Label, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
 import { AppState, WorkerItem } from '../../states/types';
 import WorkerRow from './WorkerRow';
 import { TableSortLabel } from "@material-ui/core";
@@ -19,6 +19,7 @@ const AgentAdminView = () => {
   const [sort, setSort] = useState({ name: "asc" })
   const [teamFilterValue, setTeamFilterValue] = useState('');
   const [skillsFilterValue, setSkillsFilterValue] = useState('');
+  const [batchkMode, setBatchMode] = useState(false);
 
   const workers = useSelector(
     (state: AppState) => { return state[namespace]?.workerList?.workers || [] }
@@ -88,7 +89,16 @@ const AgentAdminView = () => {
               <THead stickyHeader top={0}>
                 <Tr>
                   <Th>
-                    Worker Name
+                    <Checkbox
+                      checked={batchkMode}
+                      id="batchMode"
+                      name="batchMode"
+                      onChange={(event) => {
+                        setBatchMode(event.target.checked);
+                      }}
+                    >
+                      Name
+                    </Checkbox>
                   </Th>
                   <Th>
                     <TableSortLabel
@@ -128,9 +138,9 @@ const AgentAdminView = () => {
                 </Tr>
               </THead>
               <TBody>
-                {sortedWorkers.map((wk: WorkerItem) => (
-                  <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
-                ))}
+                {/* {sortedWorkers.map((wk: WorkerItem) => (
+                  <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} selectAll={false}/>
+                ))} */}
               </TBody>
             </Table>
           </Box>

@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { styled } from '@twilio/flex-ui';
 import {
+  Button,
   Input,
+  Checkbox,
   Flex,
   Box,
   Label,
@@ -19,17 +21,23 @@ import WorkerRow from './WorkerRow';
 import { TableSortLabel } from "@material-ui/core";
 import { namespace } from '../../states';
 import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal';
+import { PLUGIN_NAME } from '../../utils/constants';
+import BulkUpdateWorkersModal from '../UpdateWorkerPanel/BulkUpdateWorkersModal';
 
 const ScrollWrapper = styled('div')`
   overflow: auto;
 `;
 type SortDirection = 'asc' | 'desc';
 
+export interface SelectedWorkerSids { [workerSid: string]: boolean }
+
 const AgentAdminViewWithSideModal = () => {
   const [selectedWorker, setSelectedWorker] = useState<WorkerItem | undefined>();
   const [sort, setSort] = useState({ name: "asc" })
   const [teamFilterValue, setTeamFilterValue] = useState('');
   const [skillsFilterValue, setSkillsFilterValue] = useState('');
+  const [selectAll, setSelectAll] = useState(false);
+  const [workerSelection, setWorkerSelection] = useState({} as SelectedWorkerSids);
 
   const workers = useSelector(
     (state: AppState) => { return state[namespace]?.workerList?.workers || [] }
@@ -45,6 +53,18 @@ const AgentAdminViewWithSideModal = () => {
   const resetWorker = () => {
     setSelectedWorker(undefined);
     dialog.hide();
+  }
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectAll(event.target.checked);
+  }
+
+  const workerSelectionChanged = (workerChannelSid: string, selected: boolean) => {
+    //console.log(PLUGIN_NAME, 'Worker Selection:', workerSelection);
+    setWorkerSelection(workerSelection => ({
+      ...workerSelection,
+      [workerChannelSid]: selected
+    }));
   }
 
   const updateTeamFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,13 +113,25 @@ const AgentAdminViewWithSideModal = () => {
   return (
     <ScrollWrapper>
       <Flex width="100%">
-        <Flex grow width="100%">
+        <Flex vertical grow width="100%">
+          <Box padding="space40">
+          <BulkUpdateWorkersModal workerSelection={workerSelection}/>
+            
+          </Box>
+
           <Box overflowY='auto' maxHeight='700px' width="100%">
             <Table tableLayout="fixed">
               <THead stickyHeader top={0}>
                 <Tr>
-                  <Th>
-                    Worker Name
+                  <Th align="center">
+                    <Checkbox
+                      checked={selectAll}
+                      id="batchMode"
+                      name="batchMode"
+                      onChange={handleSelectAll}
+                    >
+                      Name
+                    </Checkbox>
                   </Th>
                   <Th>
                     <TableSortLabel
@@ -140,7 +172,12 @@ const AgentAdminViewWithSideModal = () => {
               </THead>
               <TBody>
                 {sortedWorkers.map((wk: WorkerItem) => (
-                  <WorkerRow key={wk.sid} wk={wk} openEditWorkerAttr={openEditWorkerAttr} />
+                  <WorkerRow
+                    key={wk.sid}
+                    wk={wk}
+                    openEditWorkerAttr={openEditWorkerAttr}
+                    workerSelectionChanged={workerSelectionChanged}
+                    selectAll={selectAll} />
                 ))}
               </TBody>
             </Table>

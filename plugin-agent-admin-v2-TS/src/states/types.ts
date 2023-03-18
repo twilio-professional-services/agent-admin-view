@@ -42,8 +42,28 @@ export interface WorkerItem {
   attributes: WorkerAttributes
 }
 
+export interface WorkerChannel {
+  taskChannelUniqueName: string,
+  sid: string,
+  configuredCapacity: string,
+  available: boolean
+}
 
-
+export interface WorkerChannelCapacityResponse {
+  accountSid: string;
+  assignedTasks: number;
+  available: boolean;
+  availableCapacityPercentage: number;
+  configuredCapacity: number;
+  dateCreated: string;
+  dateUpdated: string;
+  sid: string;
+  taskChannelSid: string;
+  taskChannelUniqueName: string;
+  workerSid: string;
+  workspaceSid: string;
+  url: string;
+}
 
 // workers are stored in [agent-admin].workerList.workers
 
