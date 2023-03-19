@@ -9,7 +9,7 @@ interface OwnProps {
   channelSettingsChanged: (channelSid: string, changed: boolean, available: boolean, capacity: number) => void;
 }
 
-const CapacityChannel = ({ workerChannelSid, taskChannelName , options, channelSettingsChanged }: OwnProps) => {
+const CapacityChannel = ({ workerChannelSid, taskChannelName, options, channelSettingsChanged }: OwnProps) => {
   const [changed, setChanged] = useState(false);
   const [capacity, setCapacity] = useState("0");
   const [available, setAvailable] = useState(true);
@@ -45,21 +45,16 @@ const CapacityChannel = ({ workerChannelSid, taskChannelName , options, channelS
         </Switch>
       </Td>
       <Td>
-        <Flex vAlignContent="center">
-          <Box width="50%" >
-            <Label htmlFor={taskChannelName}> Capacity:&nbsp;  </Label>
-          </Box>
-          <Box>
-            <Select
-              value={capacity}
-              onChange={handleCapacityChange}
-              id={taskChannelName}
-            >
-              {options.map((option) => {
-                return (<Option key={option} value={option}> {option} </Option>)
-              })}
-            </Select>
-          </Box>
+        <Flex vAlignContent="center" width="size10">
+          <Select
+            value={capacity}
+            onChange={handleCapacityChange}
+            id={taskChannelName}
+          >
+            {options.map((option) => {
+              return (<Option key={option} value={option}> {option} </Option>)
+            })}
+          </Select>
         </Flex>
       </Td>
     </Tr>

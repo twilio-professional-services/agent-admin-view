@@ -9,7 +9,7 @@ class WorkerUtil {
     const skills = worker.attributes.routing.skills;
     const levels = worker.attributes.routing.levels;
     let str = "";
-    if (skills.length==0) return "NONE";
+    if (skills.length == 0) return "NONE";
     for (let i = 0; i < skills.length; i++) {
       let skill = skills[i];
       str += skill;
@@ -78,7 +78,22 @@ class WorkerUtil {
     }
     return worker;
   }
+
+  //New Batch Update Workers
+  batchUpdateWorkers = async (workerSids, workerAttr) => {
+    //Throttle from UI?
+    //Change implementation
+    //Implement inside new function
+    workerSids.forEach(sid => {
+      console.log(PLUGIN_NAME, 'Batch Updating worker:', sid);
+      this.updateWorker(sid, workerAttr);
+    })
+  }
+
 }
+
+
+
 
 const workerUtil = new WorkerUtil();
 

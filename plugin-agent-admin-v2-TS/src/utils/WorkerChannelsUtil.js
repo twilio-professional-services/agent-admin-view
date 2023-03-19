@@ -28,7 +28,7 @@ class WorkerChannelsUtil {
     } catch (error) {
       console.error(PLUGIN_NAME, 'Failed to get Channels');
     }
-    
+
     return workerChannels;
   }
 
@@ -41,7 +41,7 @@ class WorkerChannelsUtil {
       Token: manager.store.getState().flex.session.ssoTokenPayload.token,
       workerSid,
       workerChannelSid,
-      capacity, 
+      capacity,
       available
     };
     console.log('Update worker channel with payload: ', fetchBody);
@@ -62,6 +62,16 @@ class WorkerChannelsUtil {
       console.error(PLUGIN_NAME, 'Failed to update channel');
     }
     return workerChannel;
+  }
+
+
+  batchUpdateChannelCapacity = async (workerSids, channelCapacity) => {
+    //Throttle from UI?
+    workerSids.forEach(sid => {
+      console.log(PLUGIN_NAME, 'Batch Updating worker:', sid);
+      //
+    })
+
   }
 }
 

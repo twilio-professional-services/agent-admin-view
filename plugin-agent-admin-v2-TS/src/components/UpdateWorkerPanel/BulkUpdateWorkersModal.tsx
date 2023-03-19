@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-
+import { Manager } from '@twilio/flex-ui';
 import {
   Button,
   Flex,
@@ -17,9 +16,10 @@ import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHe
 import { useUID } from "@twilio-paste/uid-library";
 import FormRowText from './FormRowText';
 import FormRowSelect from './FormRowSelect';
-import { PLUGIN_NAME, capacityOptions,teams, departments } from '../../utils/constants';
+import { PLUGIN_NAME, teams, departments } from '../../utils/constants';
 import { SelectedWorkerSids } from '../AgentAdminView/AgentAdminViewWithSideModal';
-import WorkerChannelCapacity from './WorkerChannelCapacity';
+import WorkerUtil from '../../utils/WorkerUtil';
+import { Actions as WorkerActions } from '../../states/reducer';
 
 interface OwnProps {
   workerSelection: SelectedWorkerSids
@@ -28,22 +28,18 @@ interface OwnProps {
 const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
   // Modal properties
   const [isOpen, setIsOpen] = React.useState(false);
-  const [changed, setChanged] = useState(false);
-
-  const [teamId, setTeamId] = useState('');
-  const [teamName, setTeamName] = useState('');
-  const [departmentId, setDepartmentId] = useState('');
-  const [departmentName, setDepartmentName] = useState('');
+  
+  const [teamId, setTeamId] = useState(teams[0].value);
+  const [teamName, setTeamName] = useState(teams[0].value);
+  const [departmentId, setDepartmentId] = useState(departments[0].value);
+  const [departmentName, setDepartmentName] = useState(departments[0].value);
   const [location, setLocation] = useState('');
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
   const modalHeadingID = useUID();
 
-
-
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setChanged(true);
     const team = e.target.value;
     //Store team in both team_id and team_name for consistent reporting
     setTeamId(team);
@@ -51,7 +47,6 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
   }
 
   const handleDeptChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setChanged(true);
     const dept = e.target.value;
     //Store dept in both department_id and department_name for consistent reporting
     setDepartmentId(dept);
@@ -63,7 +58,6 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
     //console.log('change event ', e.target);
     const value = e.target.value;
     const id = e.target.id;
-    setChanged(true);
     switch (id) {
       case 'location':
         setLocation(value);
@@ -71,14 +65,6 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
     }
   }
 
-  const channelSettingsChanged = (taskChannelName: string, hasChanged: boolean, newAvailable: boolean, newCapacity: number) => {
-    //Handle Bulk Worker Channel Changes
-    //use workerSelection
-    //Update channel capacity for each worker
-    //Match taskChannelName to workerChannelSid
-    console.log(PLUGIN_NAME, 'Updating Worker Channel:', taskChannelName, 'Available:', newAvailable, 'Capacity:', newCapacity);
-
-  }
 
   const saveWorkerAttributes = async ( ) => {
     console.log(PLUGIN_NAME, 'Updating Workers:', workerSelection);
@@ -90,15 +76,21 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
       location
     };
     console.log(PLUGIN_NAME, 'Updated Worker Attr:', updatedAttr);
-    //await WorkerUtil.newBulkUpdateMethod(workerSids, updatedAttr);
     //create function to support bulk update
+    const workerSids = Object.keys(workerSelection).filter( sid => workerSelection[sid] );
+    console.log(PLUGIN_NAME, 'Worker Sids:', workerSids);
+    await WorkerUtil.batchUpdateWorkers(workerSids, updatedAttr);
+    //Refresh redux
+    let workers = await WorkerUtil.getWorkers();
+    Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
+    setIsOpen(false);
   }
 
 
   return (
     <div>
       <Button variant="primary" onClick={handleOpen}>
-        Bulk Update
+        Bulk Update Attributes
       </Button>
       <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
         <ModalHeader>
@@ -121,32 +113,18 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
                   <FormRowSelect
                     id="team_name"
                     label="Team"
-                    value="none"
+                    value={teamName}
                     options={teams}
                     onChangeHandler={handleTeamChange} 
                   />
                   <FormRowSelect
                     id="department_name"
                     label="Dept."
-                    value="none"
+                    value={departmentName}
                     options={departments}
                     onChangeHandler={handleDeptChange} 
                   />
-                  <FormRowText id="location" label="Location" value="none" onChangeHandler={handleChange} />
-                  <WorkerChannelCapacity
-                      workerChannelSid="chat"
-                      taskChannelName="chat"
-                      options={capacityOptions}
-                      channelSettingsChanged={channelSettingsChanged}
-                      key="chat"
-                    />
-                    <WorkerChannelCapacity
-                      workerChannelSid="sms"
-                      taskChannelName="sms"
-                      options={capacityOptions}
-                      channelSettingsChanged={channelSettingsChanged}
-                      key="sms"
-                    />
+                  <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
                 </TBody>
               </Table>
 
@@ -161,10 +139,9 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
               Cancel
             </Button>
             <Button
-              variant="primary" size="small"
+              variant="primary"
               id="saveButton"
               onClick={saveWorkerAttributes}
-              // disabled={!changed}
             >
               Save
             </Button>

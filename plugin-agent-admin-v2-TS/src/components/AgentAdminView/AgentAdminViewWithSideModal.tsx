@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { styled } from '@twilio/flex-ui';
+import { Manager, styled } from '@twilio/flex-ui';
 import {
   Button,
   Input,
@@ -23,6 +23,9 @@ import { namespace } from '../../states';
 import UpdateWorkerSideModal from '../UpdateWorkerPanel/UpdateWorkerSideModal';
 import { PLUGIN_NAME } from '../../utils/constants';
 import BulkUpdateWorkersModal from '../UpdateWorkerPanel/BulkUpdateWorkersModal';
+import BulkUpdateCapacityModal from '../UpdateWorkerPanel/BulkUpdateCapacityModal';
+import WorkerUtil from '../../utils/WorkerUtil';
+import { Actions as WorkerActions } from '../../states/reducer';
 
 const ScrollWrapper = styled('div')`
   overflow: auto;
@@ -110,15 +113,33 @@ const AgentAdminViewWithSideModal = () => {
       .sort(sortByName);
   }
 
+const reloadWorkers = async () => {
+  const workers = await WorkerUtil.getWorkers();
+  Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
+
+}
+
   return (
     <ScrollWrapper>
-      <Flex width="100%">
-        <Flex vertical grow width="100%">
+      <Flex vertical width="100%">
+        <Flex grow width="100%">
           <Box padding="space40">
-          <BulkUpdateWorkersModal workerSelection={workerSelection}/>
-            
+            <BulkUpdateWorkersModal workerSelection={workerSelection} />
           </Box>
-
+          <Box padding="space40">
+            <BulkUpdateCapacityModal workerSelection={workerSelection} />
+          </Box>
+          <Box padding="space40">
+          <Button
+              variant="primary"
+              id="Reload"
+              onClick={reloadWorkers}
+            >
+              Reload
+            </Button>
+          </Box>
+        </Flex>
+        <Flex>
           <Box overflowY='auto' maxHeight='700px' width="100%">
             <Table tableLayout="fixed">
               <THead stickyHeader top={0}>
