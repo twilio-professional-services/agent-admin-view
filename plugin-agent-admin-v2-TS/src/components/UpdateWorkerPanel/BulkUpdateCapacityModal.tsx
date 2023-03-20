@@ -23,12 +23,20 @@ interface OwnProps {
   workerSelection: SelectedWorkerSids
 }
 
+interface ChannelSettings {
+  changed: boolean;
+  available: boolean;
+  capacity: number;
+}
+
 const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [changed, setChanged] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [channelSettings, setChannelSettings] = useState({} as { [key: string]: ChannelSettings });
 
   useEffect(() => {
+    setChannelSettings({});
     const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
     if (workerSids && workerSids.length > 1) setEnabled(true)
     else setEnabled(false);
@@ -40,25 +48,26 @@ const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
 
   const channelSettingsChanged = (taskChannelName: string, hasChanged: boolean, newAvailable: boolean, newCapacity: number) => {
     setChanged(true);
-    //Handle Bulk Worker Channel Changes
-    //use workerSelection
-    //Update channel capacity for each worker
-    //Match taskChannelName to workerChannelSid
-    console.log(PLUGIN_NAME, 'Updating Worker Channel:', taskChannelName, 'Available:', newAvailable, 'Capacity:', newCapacity);
-
+    const newChannelSettings: { [key: string]: ChannelSettings } = {
+      ...channelSettings,
+      [taskChannelName]: {
+        changed: hasChanged,
+        available: newAvailable,
+        capacity: newCapacity
+      }
+    };
+    console.log(PLUGIN_NAME, 'New Channel Settings:', newChannelSettings);
+    setChannelSettings(newChannelSettings);
   }
 
   const saveChannelCapacity = async () => {
     //Reduce selection to array
     const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
     console.log(PLUGIN_NAME, 'Worker Sids:', workerSids);
-
-    await WorkerChannelsUtil.batchUpdateChannelCapacity(workerSids, {});
-    //create function to support bulk update
-
+    await WorkerChannelsUtil.batchUpdateChannelCapacity(workerSids, channelSettings);
+    setChannelSettings({});
     setIsOpen(false);
   }
-
 
   return (
     <div>
@@ -76,7 +85,6 @@ const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
           </ModalHeading>
         </ModalHeader>
         <ModalBody>
-
           <Flex vertical padding="space20" grow width="100%">
             <Box width="100%">
               <Table variant="borderless">
@@ -110,7 +118,6 @@ const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
             </Box>
           </Flex>
         </ModalBody>
-
         <ModalFooter>
           <ModalFooterActions>
             <Button variant="secondary" onClick={handleClose}>
@@ -126,7 +133,6 @@ const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
             </Button>
           </ModalFooterActions>
         </ModalFooter>
-
       </Modal>
     </div>
   );

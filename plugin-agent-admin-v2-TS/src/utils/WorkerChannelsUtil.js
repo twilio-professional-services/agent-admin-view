@@ -67,6 +67,8 @@ class WorkerChannelsUtil {
 
   batchUpdateChannelCapacity = async (workerSids, channelCapacity) => {
     //Throttle from UI?
+    //Update channel capacity for each worker
+    //Match taskChannelName to workerChannelSid
     workerSids.forEach(sid => {
       console.log(PLUGIN_NAME, 'Batch Updating worker:', sid);
       //
