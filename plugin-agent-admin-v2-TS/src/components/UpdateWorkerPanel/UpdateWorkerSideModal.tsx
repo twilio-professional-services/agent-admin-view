@@ -76,8 +76,9 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
   }, [worker]);
 
   useEffect(() => {
+    setChannelSettings({});
     listChannels();
-  }, [worker?.sid]);
+  }, [worker]);
 
   const listChannels = async () => {
     if (!worker) return;
@@ -162,6 +163,7 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
       let workers = await WorkerUtil.getWorkers();
       Manager.getInstance().store.dispatch(WorkerActions.setWorkers(workers));
       
+      console.log(PLUGIN_NAME, ' Channel Settings:', channelSettings);
       await Promise.all(Object.keys(channelSettings).map((workerChannelSid) => {
         const settings = channelSettings[workerChannelSid];
         if (!settings.changed || !worker) {
@@ -171,18 +173,21 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
         return WorkerChannelsUtil.updateWorkerChannelCapacity(workerSid, workerChannelSid, settings.capacity, settings.available);
       }));
       resetWorker();
+      setChannelSettings({});
     }
   }
 
   const channelSettingsChanged = (workerChannelSid: string, hasChanged: boolean, newAvailable: boolean, newCapacity: number) => {
-    setChannelSettings(workerChannelChanges => ({
-      ...workerChannelChanges,
+    const newChannelSettings: { [key: string]: ChannelSettings } = {
+      ...channelSettings,
       [workerChannelSid]: {
         changed: hasChanged,
         available: newAvailable,
         capacity: newCapacity
       }
-    }));
+    };
+    console.log(PLUGIN_NAME, 'New Channel Settings:', newChannelSettings);
+    setChannelSettings(newChannelSettings);
   }
 
   return (
@@ -238,6 +243,8 @@ const UpdateWorkerSideModal = ({ worker, resetWorker, dialogState }: OwnProps) =
                     <WorkerChannelCapacity
                       workerChannelSid={workerChannel.sid}
                       taskChannelName={workerChannel.taskChannelUniqueName}
+                      channelAvailable={workerChannel.available}
+                      configuredCapacity={workerChannel.configuredCapacity}
                       options={capacityOptions}
                       channelSettingsChanged={channelSettingsChanged}
                       key={workerChannel.sid}

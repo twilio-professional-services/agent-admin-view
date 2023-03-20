@@ -34,7 +34,7 @@ exports.handler = TokenValidator(async function (context, event, callback) {
     console.log('Updated', workerSid, 'attributes with', updatedAttributes);
 
     response.appendHeader("Content-Type", "application/json");
-    response.setBody(JSON.parse(updateWorker.attributes));
+    response.setBody(updateWorker);
     return callback(null, response);
   } catch (err) {
     returnError(callback, response, err.message);

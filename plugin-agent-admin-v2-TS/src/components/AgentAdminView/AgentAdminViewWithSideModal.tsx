@@ -49,6 +49,7 @@ const AgentAdminViewWithSideModal = () => {
   const dialog = useSideModalState({});
 
   const openEditWorkerAttr = (worker: WorkerItem) => {
+    console.log(PLUGIN_NAME, 'Selected Worker:', worker.sid);
     setSelectedWorker(worker);
     dialog.show();
   }

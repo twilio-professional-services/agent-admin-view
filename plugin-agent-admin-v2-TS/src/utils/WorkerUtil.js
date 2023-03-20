@@ -1,5 +1,7 @@
-import { Manager } from '@twilio/flex-ui';
+import { Manager, Notifications } from '@twilio/flex-ui';
 const manager = Manager.getInstance();
+import { NotificationIds } from '../notifications';
+
 const PLUGIN_NAME = 'AgentAdminPlugin';
 
 class WorkerUtil {
@@ -73,8 +75,10 @@ class WorkerUtil {
       const response = await fetch(fetchUrl, fetchOptions);
       worker = await response.json();
       console.debug(PLUGIN_NAME, 'Updated worker:', worker);
+      Notifications.showNotification(NotificationIds.UPDATE_WORKER_SUCCESS);
     } catch (error) {
       console.error(PLUGIN_NAME, 'Failed to update worker');
+      Notifications.showNotification(NotificationIds.UPDATE_WORKER_FAILED);
     }
     return worker;
   }

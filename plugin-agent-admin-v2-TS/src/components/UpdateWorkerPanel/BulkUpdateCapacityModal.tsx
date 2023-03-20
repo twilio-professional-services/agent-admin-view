@@ -82,6 +82,8 @@ const BulkUpdateCapacityModal = ({ workerSelection } : OwnProps) => {
                   <WorkerChannelCapacity
                       workerChannelSid="chat"
                       taskChannelName="chat"
+                      channelAvailable={true}
+                      configuredCapacity={1}
                       options={capacityOptions}
                       channelSettingsChanged={channelSettingsChanged}
                       key="chat"
@@ -89,6 +91,8 @@ const BulkUpdateCapacityModal = ({ workerSelection } : OwnProps) => {
                     <WorkerChannelCapacity
                       workerChannelSid="sms"
                       taskChannelName="sms"
+                      channelAvailable={true}
+                      configuredCapacity={1}
                       options={capacityOptions}
                       channelSettingsChanged={channelSettingsChanged}
                       key="sms"

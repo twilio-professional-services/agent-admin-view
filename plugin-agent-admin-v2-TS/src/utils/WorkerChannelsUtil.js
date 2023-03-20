@@ -34,7 +34,7 @@ class WorkerChannelsUtil {
 
   updateWorkerChannelCapacity = async (workerSid, workerChannelSid, capacity, available) => {
 
-    console.debug('Updating worker channel', workerChannelSid, 'for worker', workerSid);
+    console.debug(PLUGIN_NAME, 'Updating worker channel', workerChannelSid, 'for worker', workerSid);
     const fetchUrl = `${process.env.FLEX_APP_FUNCTIONS_BASE}/setWorkerChannelCapacity`;
     // send attributes as json
     const fetchBody = {
@@ -44,7 +44,7 @@ class WorkerChannelsUtil {
       capacity,
       available
     };
-    console.log('Update worker channel with payload: ', fetchBody);
+    console.log(PLUGIN_NAME, 'Update worker channel with payload: ', fetchBody);
     const fetchOptions = {
       method: 'POST',
       body: new URLSearchParams(fetchBody),

@@ -5,14 +5,16 @@ import { Flex, Box, Select, Option, Label, Tr, Td, Switch } from "@twilio-paste/
 interface OwnProps {
   workerChannelSid: string,
   taskChannelName: string,
+  channelAvailable: boolean,
+  configuredCapacity: number
   options: Array<string>,
   channelSettingsChanged: (channelSid: string, changed: boolean, available: boolean, capacity: number) => void;
 }
 
-const CapacityChannel = ({ workerChannelSid, taskChannelName, options, channelSettingsChanged }: OwnProps) => {
+const CapacityChannel = ({ workerChannelSid, taskChannelName, channelAvailable, configuredCapacity, options, channelSettingsChanged }: OwnProps) => {
   const [changed, setChanged] = useState(false);
-  const [capacity, setCapacity] = useState("0");
-  const [available, setAvailable] = useState(true);
+  const [capacity, setCapacity] = useState(String(configuredCapacity));
+  const [available, setAvailable] = useState(channelAvailable);
 
   useEffect(() => {
     // notify the parent of the new settings
