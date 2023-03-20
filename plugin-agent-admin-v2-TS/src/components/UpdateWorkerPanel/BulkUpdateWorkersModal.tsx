@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Manager } from '@twilio/flex-ui';
 import {
   Button,
@@ -25,15 +25,20 @@ interface OwnProps {
   workerSelection: SelectedWorkerSids
 }
 
-const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
-  // Modal properties
+const BulkUpdateWorkersModal = ({ workerSelection }: OwnProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  
   const [teamId, setTeamId] = useState(teams[0].value);
   const [teamName, setTeamName] = useState(teams[0].value);
   const [departmentId, setDepartmentId] = useState(departments[0].value);
   const [departmentName, setDepartmentName] = useState(departments[0].value);
   const [location, setLocation] = useState('');
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
+    if (workerSids && workerSids.length > 1) setEnabled(true)
+    else setEnabled(false);
+  }, [workerSelection]);
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -66,7 +71,7 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
   }
 
 
-  const saveWorkerAttributes = async ( ) => {
+  const saveWorkerAttributes = async () => {
     console.log(PLUGIN_NAME, 'Updating Workers:', workerSelection);
     let updatedAttr = {
       team_id: teamId,
@@ -77,7 +82,7 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
     };
     console.log(PLUGIN_NAME, 'Updated Worker Attr:', updatedAttr);
     //create function to support bulk update
-    const workerSids = Object.keys(workerSelection).filter( sid => workerSelection[sid] );
+    const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
     console.log(PLUGIN_NAME, 'Worker Sids:', workerSids);
     await WorkerUtil.batchUpdateWorkers(workerSids, updatedAttr);
     //Refresh redux
@@ -89,7 +94,11 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
 
   return (
     <div>
-      <Button variant="primary" onClick={handleOpen}>
+      <Button
+        variant="primary"
+        onClick={handleOpen}
+        disabled={!enabled}
+      >
         Bulk Update Attributes
       </Button>
       <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
@@ -115,14 +124,14 @@ const BulkUpdateWorkersModal = ({ workerSelection } : OwnProps) => {
                     label="Team"
                     value={teamName}
                     options={teams}
-                    onChangeHandler={handleTeamChange} 
+                    onChangeHandler={handleTeamChange}
                   />
                   <FormRowSelect
                     id="department_name"
                     label="Dept."
                     value={departmentName}
                     options={departments}
-                    onChangeHandler={handleDeptChange} 
+                    onChangeHandler={handleDeptChange}
                   />
                   <FormRowText id="location" label="Location" value={location} onChangeHandler={handleChange} />
                 </TBody>

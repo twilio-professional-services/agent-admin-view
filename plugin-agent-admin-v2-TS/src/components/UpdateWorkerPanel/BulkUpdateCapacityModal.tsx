@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Button,
@@ -24,15 +23,20 @@ interface OwnProps {
   workerSelection: SelectedWorkerSids
 }
 
-const BulkUpdateCapacityModal = ({ workerSelection } : OwnProps) => {
-  // Modal properties
+const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [changed, setChanged] = useState(false);
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
+    if (workerSids && workerSids.length > 1) setEnabled(true)
+    else setEnabled(false);
+  }, [workerSelection]);
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
   const modalHeadingID = useUID();
-
 
   const channelSettingsChanged = (taskChannelName: string, hasChanged: boolean, newAvailable: boolean, newCapacity: number) => {
     setChanged(true);
@@ -44,9 +48,9 @@ const BulkUpdateCapacityModal = ({ workerSelection } : OwnProps) => {
 
   }
 
-  const saveChannelCapacity = async ( ) => {
+  const saveChannelCapacity = async () => {
     //Reduce selection to array
-    const workerSids = Object.keys(workerSelection).filter( sid => workerSelection[sid] );
+    const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
     console.log(PLUGIN_NAME, 'Worker Sids:', workerSids);
 
     await WorkerChannelsUtil.batchUpdateChannelCapacity(workerSids, {});
@@ -58,7 +62,11 @@ const BulkUpdateCapacityModal = ({ workerSelection } : OwnProps) => {
 
   return (
     <div>
-      <Button variant="primary" onClick={handleOpen}>
+      <Button
+        variant="primary"
+        onClick={handleOpen}
+        disabled={!enabled}
+      >
         Bulk Update Capacity
       </Button>
       <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
@@ -80,23 +88,23 @@ const BulkUpdateCapacityModal = ({ workerSelection } : OwnProps) => {
                 </THead>
                 <TBody>
                   <WorkerChannelCapacity
-                      workerChannelSid="chat"
-                      taskChannelName="chat"
-                      channelAvailable={true}
-                      configuredCapacity={1}
-                      options={capacityOptions}
-                      channelSettingsChanged={channelSettingsChanged}
-                      key="chat"
-                    />
-                    <WorkerChannelCapacity
-                      workerChannelSid="sms"
-                      taskChannelName="sms"
-                      channelAvailable={true}
-                      configuredCapacity={1}
-                      options={capacityOptions}
-                      channelSettingsChanged={channelSettingsChanged}
-                      key="sms"
-                    />
+                    workerChannelSid="chat"
+                    taskChannelName="chat"
+                    channelAvailable={true}
+                    configuredCapacity={1}
+                    options={capacityOptions}
+                    channelSettingsChanged={channelSettingsChanged}
+                    key="chat"
+                  />
+                  <WorkerChannelCapacity
+                    workerChannelSid="sms"
+                    taskChannelName="sms"
+                    channelAvailable={true}
+                    configuredCapacity={1}
+                    options={capacityOptions}
+                    channelSettingsChanged={channelSettingsChanged}
+                    key="sms"
+                  />
                 </TBody>
               </Table>
             </Box>
