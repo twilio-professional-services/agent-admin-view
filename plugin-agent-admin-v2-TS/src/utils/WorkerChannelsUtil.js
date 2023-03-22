@@ -64,16 +64,33 @@ class WorkerChannelsUtil {
     return workerChannel;
   }
 
+  updateWorkerChannels = async (workerSid, channelSettings) => {
+    console.debug(PLUGIN_NAME, 'Updating worker channels for worker', workerSid);
+    const fetchUrl = `${process.env.FLEX_APP_FUNCTIONS_BASE}/updateWorkerChannels`;
+    // send attributes as json
+    const fetchBody = {
+      Token: manager.store.getState().flex.session.ssoTokenPayload.token,
+      workerSid,
+      channelProps: JSON.stringify(channelSettings),
+    };
+    console.log(PLUGIN_NAME, 'Update worker channels with payload: ', fetchBody);
+    const fetchOptions = {
+      method: 'POST',
+      body: new URLSearchParams(fetchBody),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    };
 
-  batchUpdateChannelCapacity = async (workerSids, channelCapacity) => {
-    //Throttle from UI?
-    //Update channel capacity for each worker
-    //Match taskChannelName to workerChannelSid
-    workerSids.forEach(sid => {
-      console.log(PLUGIN_NAME, 'Batch Updating worker:', sid);
-      //
-    })
-
+    let results;
+    try {
+      const response = await fetch(fetchUrl, fetchOptions);
+      results = await response.json();
+      console.debug(PLUGIN_NAME, 'Updated channels:', results);
+    } catch (error) {
+      console.error(PLUGIN_NAME, 'Failed to update channels');
+    }
+    return results;
   }
 }
 

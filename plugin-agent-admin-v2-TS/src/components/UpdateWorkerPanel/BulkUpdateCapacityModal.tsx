@@ -64,7 +64,10 @@ const BulkUpdateCapacityModal = ({ workerSelection }: OwnProps) => {
     //Reduce selection to array
     const workerSids = Object.keys(workerSelection).filter(sid => workerSelection[sid]);
     console.log(PLUGIN_NAME, 'Worker Sids:', workerSids);
-    await WorkerChannelsUtil.batchUpdateChannelCapacity(workerSids, channelSettings);
+    await Promise.all(Object.values(workerSids).map((wkSid) => {
+      return WorkerChannelsUtil.updateWorkerChannels(wkSid, channelSettings);
+    }));
+  
     setChannelSettings({});
     setIsOpen(false);
   }
