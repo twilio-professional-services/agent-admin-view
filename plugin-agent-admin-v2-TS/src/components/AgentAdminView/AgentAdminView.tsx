@@ -72,7 +72,7 @@ const AgentAdminView = () => {
   const nameSortValue = sort.name as SortDirection;
 
   let sortedWorkers: Array<WorkerItem> = [];
-  if (workers && workers.length > 1) {
+  if (workers && workers.length > 0) {
     sortedWorkers = workers
       .filter(filterByTeam)
       .filter(filterBySkills)
